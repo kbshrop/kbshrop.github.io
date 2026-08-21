@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyle Shropshire — Mechanical Design Engineer</title>
+<meta name="description" content="Kyle Shropshire — mechanical design engineer and founder of Drawing Navigator, based in Tulsa, Oklahoma.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap">
+    <span class="tb-name">Kyle Shropshire</span>
+    <nav class="tb-nav">
+      <a href="#about">About</a>
+      <a href="#career">Career</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============================= HERO ============================= -->
+  <section class="hero wrap">
+    <div class="hero-head">
+      <p class="eyebrow" style="justify-content:center;">Mechanical Design Engineer &nbsp;·&nbsp; Tulsa, OK</p>
+      <h1>Kyle Shropshire</h1>
+      <p class="lede">I design the machines that make things, and the software that keeps track of how they're built &mdash; from robotic welding positioners to a search engine for CAD drawings.</p>
+    </div>
+
+    <div class="elevation-wrap">
+      <svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="elevTitle elevDesc">
+        <title id="elevTitle">Line elevation of a mid-century modern house</title>
+        <desc id="elevDesc">A drawn elevation of a butterfly-roof house used as a navigation diagram. Numbered callouts link to About, Career, Projects, and Contact.</desc>
+
+        <!-- ground -->
+        <line x1="30" y1="430" x2="1170" y2="430" class="elevation-ground"/>
+
+        <!-- carport (open structure, no walls) -->
+        <polyline points="30,196 100,150 230,150" class="elevation-line"/>
+        <line x1="100" y1="150" x2="100" y2="430" class="elevation-line-thin"/>
+        <line x1="40" y1="196" x2="40" y2="430" class="elevation-line-thin"/>
+
+        <!-- main roofline: shallow butterfly, eaves high at the ends, low at center -->
+        <polyline points="230,150 550,200 870,150" class="elevation-line"/>
+
+        <!-- structural posts -->
+        <line x1="230" y1="150" x2="230" y2="430" class="elevation-line-thin"/>
+        <line x1="390" y1="175" x2="390" y2="430" class="elevation-line-thin"/>
+        <line x1="550" y1="200" x2="550" y2="430" class="elevation-line-thin"/>
+        <line x1="710" y1="175" x2="710" y2="430" class="elevation-line-thin"/>
+        <line x1="870" y1="150" x2="870" y2="430" class="elevation-line"/>
+
+        <!-- floor-to-ceiling glazing, left bay -->
+        <rect x="232" y="152" width="156" height="276" class="elevation-glass"/>
+        <g class="elevation-line-thin">
+          <line x1="270" y1="155" x2="270" y2="428"/>
+          <line x1="310" y1="160" x2="310" y2="428"/>
+          <line x1="350" y1="167" x2="350" y2="428"/>
+          <line x1="232" y1="300" x2="388" y2="300"/>
+        </g>
+
+        <!-- solid wall panel, right bay, with door + small window -->
+        <rect x="552" y="202" width="316" height="228" class="elevation-fill-paper" stroke="#2A211A" stroke-width="1.4"/>
+        <rect x="612" y="300" width="70" height="130" class="elevation-line-thin"/>
+        <circle cx="672" cy="365" r="2.4" fill="#2A211A"/>
+        <rect x="740" y="240" width="90" height="60" class="elevation-glass" stroke="#2A211A" stroke-width="1.4"/>
+        <line x1="785" y1="240" x2="785" y2="300" class="elevation-line-thin"/>
+
+        <!-- breeze block screen wall -->
+        <g stroke="#2A211A" stroke-width="1.3" fill="none" opacity="0.85">
+          <rect x="900" y="330" width="100" height="100"/>
+          <rect x="905" y="335" width="21" height="21"/><circle cx="915.5" cy="345.5" r="8"/>
+          <rect x="931" y="335" width="21" height="21"/><circle cx="941.5" cy="345.5" r="8"/>
+          <rect x="957" y="335" width="21" height="21"/><circle cx="967.5" cy="345.5" r="8"/>
+          <rect x="905" y="361" width="21" height="21"/><circle cx="915.5" cy="371.5" r="8"/>
+          <rect x="931" y="361" width="21" height="21"/><circle cx="941.5" cy="371.5" r="8"/>
+          <rect x="957" y="361" width="21" height="21"/><circle cx="967.5" cy="371.5" r="8"/>
+          <rect x="905" y="387" width="21" height="21"/><circle cx="915.5" cy="397.5" r="8"/>
+          <rect x="931" y="387" width="21" height="21"/><circle cx="941.5" cy="397.5" r="8"/>
+          <rect x="957" y="387" width="21" height="21"/><circle cx="967.5" cy="397.5" r="8"/>
+        </g>
+
+        <!-- mailbox -->
+        <line x1="1080" y1="380" x2="1080" y2="430" class="elevation-line-thin"/>
+        <rect x="1060" y="362" width="40" height="20" rx="8" class="elevation-line-thin" fill="none"/>
+
+        <!-- dimension string under the building -->
+        <g class="elevation-dim">
+          <line x1="230" y1="450" x2="870" y2="450"/>
+          <line x1="230" y1="444" x2="230" y2="456"/>
+          <line x1="870" y1="444" x2="870" y2="456"/>
+        </g>
+        <text x="550" y="446" class="elevation-dim-text">36'-0" TYP. FACADE</text>
+
+        <!-- ============ callouts ============ -->
+        <!-- 01 About -> door -->
+        <line x1="672" y1="126" x2="672" y2="298" class="leader"/>
+        <a href="#about" class="balloon-link" aria-label="Jump to About">
+          <circle cx="672" cy="108" r="20" class="balloon-circle"/>
+          <text x="672" y="109" class="balloon-num">01</text>
+          <text x="672" y="140" class="balloon-label" text-anchor="middle">About</text>
+        </a>
+
+        <!-- 02 Career -> carport -->
+        <line x1="100" y1="126" x2="100" y2="148" class="leader"/>
+        <a href="#career" class="balloon-link" aria-label="Jump to Career">
+          <circle cx="100" cy="108" r="20" class="balloon-circle"/>
+          <text x="100" y="109" class="balloon-num">02</text>
+          <text x="100" y="140" class="balloon-label" text-anchor="middle">Career</text>
+        </a>
+
+        <!-- 03 Projects -> glazing -->
+        <line x1="310" y1="126" x2="310" y2="158" class="leader"/>
+        <a href="#projects" class="balloon-link" aria-label="Jump to Projects">
+          <circle cx="310" cy="108" r="20" class="balloon-circle"/>
+          <text x="310" y="109" class="balloon-num">03</text>
+          <text x="310" y="140" class="balloon-label" text-anchor="middle">Projects</text>
+        </a>
+
+        <!-- 04 Contact -> mailbox -->
+        <line x1="1080" y1="126" x2="1080" y2="360" class="leader"/>
+        <a href="#contact" class="balloon-link" aria-label="Jump to Contact">
+          <circle cx="1080" cy="108" r="20" class="balloon-circle"/>
+          <text x="1080" y="109" class="balloon-num">04</text>
+          <text x="1080" y="140" class="balloon-label" text-anchor="middle">Contact</text>
+        </a>
+      </svg>
+      <p class="hero-caption">Callouts drawn the way Drawing Navigator balloons a part &mdash; click one to jump in.</p>
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <!-- ============================= ABOUT ============================= -->
+  <section id="about" class="panel wrap">
+    <p class="eyebrow"><span class="num">01</span> About</p>
+    <div class="about-grid">
+      <div>
+        <h2>Ten years of taking things apart to see how they work &mdash; then building better ones.</h2>
+        <p>I'm a mechanical design engineer based in Tulsa, Oklahoma. My work has ranged from a miniaturized manual hydraulic power system for remote oilfield valves, to robotic welding and handling equipment built for parts that weigh as much as 20,000&nbsp;kg &mdash; sometimes small enough to ride in the front seat of my truck, sometimes big enough to pick the truck up.</p>
+        <p>Alongside the hardware, I've been writing software since a college elective called "VBA for Engineers" turned into a habit. In 2020 I founded a software company to build the tools I wished existed on the shop floor &mdash; starting with a faster way to search and cross-reference the thousands of CAD drawings most manufacturers are quietly buried in.</p>
+      </div>
+      <div class="fact-card">
+        <dl>
+          <dt>Based in</dt><dd>Tulsa, Oklahoma</dd>
+          <dt>Education</dt><dd>B.S. Mechanical Engineering, Oklahoma State University</dd>
+          <dt>Focus</dt><dd>Industrial &amp; robotic equipment design, engineering software</dd>
+          <dt>Founded</dt><dd>Drawing Navigator, LLC (2020)</dd>
+          <dt>Elsewhere</dt><dd><a href="https://www.linkedin.com/in/kyleshropshiredrawnav/" target="_blank" rel="noopener">LinkedIn ↗</a></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <!-- ============================= CAREER ============================= -->
+  <section id="career" class="panel wrap">
+    <p class="eyebrow"><span class="num">02</span> Career</p>
+    <h2>Drawn to scale.</h2>
+    <div class="scale-rule">
+      <div class="scale-line"></div>
+      <div class="milestones">
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2008–2012</div>
+            <div class="milestone-role">Oklahoma State University</div>
+            <div class="milestone-desc">B.S. Mechanical Engineering. Picked up a "VBA for Engineers" elective that turned into a second career.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2012–2018</div>
+            <div class="milestone-role">Oil &amp; Gas Design Engineer</div>
+            <div class="milestone-desc">Valve actuators and remote equipment, including a miniaturized manual hydraulic power system for remote valves.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2014</div>
+            <div class="milestone-role">First Software Sale</div>
+            <div class="milestone-desc">Sold a custom piece of software to a local business &mdash; the first sign the side projects could stand on their own.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2018–Present</div>
+            <div class="milestone-role">Robotic Equipment Design</div>
+            <div class="milestone-desc">Robotic welding and handling equipment, including positioners built for parts up to 20,000&nbsp;kg.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2020</div>
+            <div class="milestone-role">Founded Drawing Navigator</div>
+            <div class="milestone-desc">Started a software company to turn stacks of CAD PDFs into a searchable, linked BOM system for engineers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <!-- ============================= PROJECTS ============================= -->
+  <section id="projects" class="panel wrap">
+    <p class="eyebrow"><span class="num">03</span> Projects</p>
+    <h2>Side projects, shipped.</h2>
+    <div class="sheets">
+
+      <article class="sheet accent-brick">
+        <div class="sheet-head"><span>Sheet 01</span><span>Rev. 2026</span></div>
+        <div class="sheet-body">
+          <h3>Drawing Navigator</h3>
+          <p>An engineering PDF viewer built for CAD drawings, not accountants. Type a part number and see the drawing in under a second, linked to its Bill of Materials and everywhere it's used, with automatic revision comparison.</p>
+          <div class="tags">
+            <span class="tag">C#</span><span class="tag">SQL</span><span class="tag">OCR</span><span class="tag">PDF</span>
+          </div>
+          <a class="sheet-link" href="https://www.drawnav.com" target="_blank" rel="noopener">drawnav.com</a>
+        </div>
+      </article>
+
+      <article class="sheet accent-avocado">
+        <div class="sheet-head"><span>Sheet 02</span><span>Alpha</span></div>
+        <div class="sheet-body">
+          <h3>eido</h3>
+          <p>An AI engineering librarian for the tribal knowledge that lives in shared drives and old notes. Point it at your files and ask it questions instead of hunting for the one person who remembers the answer.</p>
+          <div class="tags">
+            <span class="tag">AI Search</span><span class="tag">Docs</span><span class="tag">Alpha Test</span>
+          </div>
+          <a class="sheet-link" href="https://www.drawnav.com/eido" target="_blank" rel="noopener">drawnav.com/eido</a>
+        </div>
+      </article>
+
+      <article class="sheet accent-mustard">
+        <div class="sheet-head"><span>Sheet 03</span><span>Run 01 of 10</span></div>
+        <div class="sheet-body">
+          <h3>Clink</h3>
+          <p>A hand-built tabletop skill game for trade show booths &mdash; discs drop through a field of pins and players race the clock with a hand crank. Hand-polished aluminum and brass, tuned by ear for the right "clink."</p>
+          <div class="tags">
+            <span class="tag">Machining</span><span class="tag">Product Design</span><span class="tag">Small Batch</span>
+          </div>
+          <a class="sheet-link" href="https://www.drawnav.com/clink" target="_blank" rel="noopener">drawnav.com/clink</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============================= CONTACT ============================= -->
+  <section id="contact" class="contact-panel">
+    <div class="wrap">
+      <p class="eyebrow"><span class="num">04</span> Contact</p>
+      <h2>Let's build something.</h2>
+      <p class="lede">Whether it's a hardware problem, a software one, or a booth game that needs the right "clink" &mdash; reach out.</p>
+      <div class="contact-links">
+        <a href="mailto:kyle@drawnav.com">kyle@drawnav.com</a>
+        <a href="https://www.linkedin.com/in/kyleshropshiredrawnav/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://www.drawnav.com" target="_blank" rel="noopener">Drawing Navigator</a>
+      </div>
+    </div>
+    <div class="footer-titleblock">
+      <div class="wrap">
+        <span>Kyle Shropshire</span>
+        <span>Mechanical Design Engineer</span>
+        <span>Tulsa, OK</span>
+        <span>Sheet 1 of 1</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
