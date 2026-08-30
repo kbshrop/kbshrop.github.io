@@ -19,8 +19,8 @@
           var id = entry.target.id;
           navLinks.forEach(function (link) {
             var isMatch = link.getAttribute('href') === '#' + id;
-            link.style.background = isMatch ? 'var(--ink)' : '';
-            link.style.color = isMatch ? 'var(--paper)' : '';
+            link.style.background = isMatch ? 'var(--olive-deep)' : '';
+            link.style.color = isMatch ? 'var(--plaster)' : '';
           });
         });
       },
