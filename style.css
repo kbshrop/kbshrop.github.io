@@ -278,6 +278,32 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
 }
 .fact-card dd { margin: 0; font-weight: 600; }
 
+/* ---------- Project page photos --------------------------------------------- */
+
+.images { display: grid; gap: 28px; }
+.photo-pair { grid-template-columns: repeat(2, 1fr); margin-top: 8px; }
+@media (max-width: 760px) {
+  .photo-pair { grid-template-columns: 1fr; }
+}
+.img-frame {
+  margin: 0;
+  border: 2px solid var(--walnut-dark);
+  background: var(--plaster-deep);
+  padding: 10px 10px 0;
+}
+.story-img,
+.story-video { display: block; width: 100%; height: auto; }
+.story-video { background: var(--charcoal); }
+.video-frame { max-width: 860px; }
+.img-caption {
+  display: block;
+  padding: 10px 2px 12px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
 /* ---------- Career scale rule ------------------------------------------- */
 
 .scale-rule { position: relative; margin-top: 56px; padding: 0 8px; }
@@ -348,45 +374,96 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
   .scale-line { display: none; }
 }
 
-/* ---------- Project sheets ------------------------------------------------ */
+/* ---------- Projects: walnut bookcase ------------------------------------- */
 
-.sheets {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
-  margin-top: 8px;
-}
-@media (max-width: 900px) {
-  .sheets { grid-template-columns: 1fr; }
-}
+.shelf-hint { margin: -8px 0 28px; color: var(--ink-soft); font-size: 15px; }
 
-.sheet {
-  border: 2px solid var(--walnut-dark);
-  background: var(--plaster-deep);
+.bookcase {
+  border: 12px solid var(--walnut);
+  outline: 2px solid var(--walnut-dark);
+  background: var(--walnut);
+  box-shadow: 8px 8px 0 var(--walnut-dark);
   display: flex;
   flex-direction: column;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  gap: 12px;
 }
-.sheet:hover {
-  transform: translateY(-4px);
-  box-shadow: 6px 6px 0 var(--walnut-dark);
-}
-.sheet-head {
+
+.shelf {
   display: flex;
-  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 290px;
+  padding: 0 clamp(14px, 4vw, 40px);
+  background: repeating-linear-gradient(90deg, #2A1B11 0 18px, #2F1F14 18px 36px);
+  box-shadow: inset 0 10px 14px -8px rgba(0, 0, 0, 0.55);
+  border-bottom: 10px solid var(--walnut-light);
+}
+
+.book {
+  --c: var(--olive);
+  --ink: var(--plaster);
+  --band: var(--brass-light);
+  position: relative;
+  display: flex;
   align-items: center;
-  border-bottom: 2px solid var(--walnut-dark);
-  padding: 10px 16px;
+  justify-content: space-between;
+  writing-mode: vertical-rl;
+  flex: none;
+  width: var(--w, 56px);
+  height: var(--h, 200px);
+  gap: 10px;
+  overflow: hidden;
+  padding: 28px 0;
+  background: var(--c);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 3px 3px 0 0;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.2), inset 3px 0 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.18s ease;
+}
+.book::before,
+.book::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--band);
+  opacity: 0.85;
+}
+.book::before { top: 14px; }
+.book::after  { bottom: 14px; }
+
+.book:hover,
+.book:focus-visible { transform: translateY(-12px); color: var(--ink); }
+.book:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+
+.book-title {
+  font-family: "League Spartan", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex: none;
+}
+.book-meta {
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  white-space: nowrap;
+  flex: none;
 }
-.sheet-body { padding: 22px 20px 20px; flex: 1; display: flex; flex-direction: column; }
-.sheet-body h3 { font-size: 22px; margin-bottom: 10px; }
-.sheet-body p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 16px; }
+
+.book-olive    { --c: var(--olive); }
+.book-brass    { --c: var(--brass); --ink: var(--walnut-dark); --band: var(--walnut-dark); }
+.book-walnut   { --c: var(--walnut-light); --ink: #1E130B; --band: var(--brass-light); }
+.book-charcoal { --c: var(--charcoal); --band: var(--orange); }
+.book-plaster  { --c: var(--plaster-deep); --ink: var(--walnut-dark); --band: var(--olive); }
+
+.shelf-object { flex: none; margin-left: 10px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
 .tag {
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
@@ -395,22 +472,12 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
   padding: 3px 8px;
   color: var(--ink);
 }
-.sheet-link {
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  border-top: 2px solid var(--walnut-dark);
-  margin-top: auto;
-  padding-top: 12px;
-  color: var(--ink);
-}
-.sheet-link:hover { color: var(--orange); }
-.sheet-link::after { content: " \2197"; }
 
-.sheet.accent-olive .sheet-head { background: var(--olive); color: var(--plaster); }
-.sheet.accent-brass .sheet-head { background: var(--brass); color: var(--walnut-dark); }
-.sheet.accent-walnut .sheet-head { background: var(--walnut); color: var(--plaster); }
+@media (max-width: 480px) {
+  .book-title { font-size: 14px; }
+  .book-meta { font-size: 10px; }
+  .shelf { gap: 6px; }
+}
 
 /* ---------- Contact / footer — dark wood-paneled nook ---------------------- */
 

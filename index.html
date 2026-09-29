@@ -225,57 +225,60 @@
   <!-- ============================= PROJECTS ============================= -->
   <section id="projects" class="panel wrap">
     <p class="eyebrow"><span class="num">03</span> Projects</p>
-    <h2>Side projects, shipped.</h2>
-    <div class="sheets">
+    <h2>Side projects.</h2>
+    <p class="shelf-hint">Pull a book off the shelf to open the project.</p>
 
-      <article class="sheet accent-olive">
-        <div class="sheet-head"><span>Sheet 01</span><span>Rev. 2026</span></div>
-        <div class="sheet-body">
-          <h3>Drawing Navigator</h3>
-          <p>An engineering PDF viewer built for CAD drawings, not accountants. Type a part number and see the drawing in under a second, linked to its Bill of Materials and everywhere it's used, with automatic revision comparison.</p>
-          <div class="tags">
-            <span class="tag">C#</span><span class="tag">SQL</span><span class="tag">OCR</span><span class="tag">PDF</span>
-          </div>
-          <a class="sheet-link" href="https://www.drawnav.com" target="_blank" rel="noopener">drawnav.com</a>
-        </div>
-      </article>
+    <div class="bookcase">
 
-      <article class="sheet accent-brass">
-        <div class="sheet-head"><span>Sheet 02</span><span>Alpha</span></div>
-        <div class="sheet-body">
-          <h3>eido</h3>
-          <p>An AI engineering librarian for the tribal knowledge that lives in shared drives and old notes. Point it at your files and ask it questions instead of hunting for the one person who remembers the answer.</p>
-          <div class="tags">
-            <span class="tag">AI Search</span><span class="tag">Docs</span><span class="tag">Alpha Test</span>
-          </div>
-          <a class="sheet-link" href="https://www.drawnav.com/eido" target="_blank" rel="noopener">drawnav.com/eido</a>
-        </div>
-      </article>
+      <!-- TOP SHELF -->
+      <div class="shelf">
+        <a class="book book-olive" href="https://www.drawnav.com" target="_blank" rel="noopener"
+           style="--h:270px; --w:64px;" aria-label="Drawing Navigator (opens drawnav.com)">
+          <span class="book-title">Drawing Navigator</span>
+          <span class="book-meta">2026</span>
+        </a>
 
-      <article class="sheet accent-walnut">
-        <div class="sheet-head"><span>Sheet 03</span><span>Run 01 of 10</span></div>
-        <div class="sheet-body">
-          <h3>Clink</h3>
-          <p>A hand-built tabletop skill game for trade show booths &mdash; discs drop through a field of pins and players race the clock with a hand crank. Hand-polished aluminum and brass, tuned by ear for the right "clink."</p>
-          <div class="tags">
-            <span class="tag">Machining</span><span class="tag">Product Design</span><span class="tag">Small Batch</span>
-          </div>
-          <a class="sheet-link" href="https://www.drawnav.com/clink" target="_blank" rel="noopener">drawnav.com/clink</a>
-        </div>
-      </article>
-	  
-	  <article class="sheet accent-olive">
-        <div class="sheet-head"><span>Sheet 04</span><span>Hardware</span></div>
-        <div class="sheet-body">
-          <h3>Mise Kitchen Timer</h3>
-          <p>A dedicated hardware kitchen timer built because I couldn't find a good one. Designed, programmed, and hand-assembled for better functionality at the stove.</p>
-          <div class="tags">
-            <span class="tag">Hardware</span><span class="tag">Product Design</span><span class="tag">Small Batch</span>
-          </div>
-          <!-- Link to your new page here -->
-          <a class="sheet-link" href="mise-timer.html">Read the Story</a>
-        </div>
-      </article>
+        <a class="book book-brass" href="https://www.drawnav.com/eido" target="_blank" rel="noopener"
+           style="--h:200px; --w:48px;" aria-label="eido (opens drawnav.com/eido)">
+          <span class="book-title">eido</span>
+          <span class="book-meta">Alpha</span>
+        </a>
+
+        <a class="book book-walnut" href="https://www.drawnav.com/clink" target="_blank" rel="noopener"
+           style="--h:228px; --w:56px;" aria-label="Clink (opens drawnav.com/clink)">
+          <span class="book-title">Clink</span>
+          <span class="book-meta">Run 01 of 10</span>
+        </a>
+
+        <!-- brass breeze-block bookend -->
+        <svg class="shelf-object" width="64" height="64" viewBox="0 0 64 64" role="presentation" aria-hidden="true">
+          <rect x="2" y="2" width="60" height="60" fill="#B08D4F" stroke="#382519" stroke-width="2"/>
+          <circle cx="32" cy="32" r="19" fill="#2a1b11" stroke="#382519" stroke-width="2"/>
+          <circle cx="32" cy="32" r="8" fill="#B08D4F"/>
+        </svg>
+      </div>
+
+      <!-- BOTTOM SHELF -->
+      <div class="shelf">
+        <a class="book book-charcoal" href="mise-timer.html"
+           style="--h:270px; --w:60px;" aria-label="Mise Kitchen Timer (project page)">
+          <span class="book-title">Mise Kitchen Timer</span>
+          <span class="book-meta">Hardware</span>
+        </a>
+
+        <a class="book book-plaster" href="spice-rack.html"
+           style="--h:250px; --w:52px;" aria-label="Custom Spice Rack (project page)">
+          <span class="book-title">Custom Spice Rack</span>
+          <span class="book-meta">Hardware</span>
+        </a>
+
+        <!-- pottery vase -->
+        <svg class="shelf-object" width="70" height="110" viewBox="0 0 70 110" role="presentation" aria-hidden="true">
+          <path d="M28 4 H42 V26 C62 38 68 62 60 92 Q58 106 35 106 Q12 106 10 92 C2 62 8 38 28 26 Z"
+                fill="#E4611C" stroke="#382519" stroke-width="2"/>
+          <path d="M8 70 Q35 80 62 70" fill="none" stroke="#F4EFE3" stroke-width="3"/>
+        </svg>
+      </div>
 
     </div>
   </section>
