@@ -460,8 +460,53 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
 .book-walnut   { --c: var(--walnut-light); --ink: #1E130B; --band: var(--brass-light); }
 .book-charcoal { --c: var(--charcoal); --band: var(--orange); }
 .book-plaster  { --c: var(--plaster-deep); --ink: var(--walnut-dark); --band: var(--olive); }
+.book-walnut-mid { --c: var(--olive-deep); --band: var(--orange); }
 
 .shelf-object { flex: none; margin-left: 10px; }
+
+/* Pop-up preview cards */
+.slot { position: relative; flex: none; width: var(--w, 56px); height: var(--h, 200px); }
+.slot.open .book { transform: translateY(-12px); }
+.pop {
+  position: absolute;
+  bottom: calc(100% + 18px);
+  left: 50%;
+  width: 230px;
+  padding: 14px 16px;
+  background: var(--plaster);
+  border: 2px solid var(--walnut-dark);
+  box-shadow: 4px 4px 0 var(--walnut-dark);
+  color: var(--ink);
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 5;
+}
+.pop::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border: 8px solid transparent;
+  border-top-color: var(--walnut-dark);
+}
+.pop h3 { font-size: 19px; margin-bottom: 4px; }
+.pop p { margin: 0 0 8px; font-size: 14px; line-height: 1.45; color: var(--ink-soft); }
+.pop .go { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600; color: var(--olive-deep); }
+.slot:hover .pop,
+.slot:focus-within .pop,
+.slot.open .pop { opacity: 1; transform: translate(-50%, 0); }
+
+.slot.edge-l .pop { left: 0; transform: translate(0, 6px); }
+.slot.edge-l .pop::after { left: 24px; margin-left: 0; }
+.slot.edge-r .pop { left: auto; right: 0; transform: translate(0, 6px); }
+.slot.edge-r .pop::after { left: auto; right: 24px; margin-left: 0; }
+.slot.edge-l:hover .pop, .slot.edge-l:focus-within .pop, .slot.edge-l.open .pop,
+.slot.edge-r:hover .pop, .slot.edge-r:focus-within .pop, .slot.edge-r.open .pop { transform: none; }
+
+@media (max-width: 480px) { .pop { width: 200px; } }
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
 .tag {

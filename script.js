@@ -32,7 +32,7 @@
   // Gentle reveal for panels and project sheets, respecting reduced-motion.
   var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-    var revealTargets = document.querySelectorAll('section.panel, .sheet, .milestone');
+    var revealTargets = document.querySelectorAll('section.panel, .milestone');
     revealTargets.forEach(function (el) {
       el.style.opacity = '0';
       el.style.transform = 'translateY(14px)';
@@ -51,5 +51,22 @@
       { threshold: 0.12 }
     );
     revealTargets.forEach(function (el) { revealObserver.observe(el); });
+  }
+
+  // Bookcase on touch screens: first tap opens the preview card, second tap follows the link.
+  if (window.matchMedia('(hover: none)').matches) {
+    var slots = Array.prototype.slice.call(document.querySelectorAll('.slot'));
+    slots.forEach(function (slot) {
+      slot.addEventListener('click', function (e) {
+        if (!slot.classList.contains('open')) {
+          e.preventDefault();
+          slots.forEach(function (s) { s.classList.remove('open'); });
+          slot.classList.add('open');
+        }
+      });
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.slot')) slots.forEach(function (s) { s.classList.remove('open'); });
+    });
   }
 })();
