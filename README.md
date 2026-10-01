@@ -1,53 +1,44 @@
 # Kyle Shropshire — Personal Site
 
-A single-page site styled as a mid-century modern architectural drawing set:
-a hand-drawn elevation of a butterfly-roof house doubles as the main nav
-(click a numbered callout to jump to a section), breeze-block screens divide
-the "rooms," and career milestones are laid out along a drafting scale.
+A site styled as a mid-century modern architectural drawing set. The Projects
+section is a walnut bookcase: hover (or tap) a book for a preview card, then
+click through to the project page.
 
-No build step, no dependencies beyond Google Fonts — just three files:
+No build step and no dependencies beyond Google Fonts.
+
+## Folder structure
 
 ```
-index.html
-style.css
-script.js
+index.html                  <- the one and only homepage (must stay at the root)
+mise-timer.html             <- project pages live at the root, one per project
+spice-rack.html
+cmth-ruler.html
+README.md
+assets/
+├── css/
+│   └── style.css
+├── js/
+│   └── script.js
+├── images/
+│   ├── mise-timer/         <- images (and videos) grouped by project
+│   ├── spice-rack/         <- includes robots-favorite-spice-rack.mp4
+│   └── cmth-ruler/
 ```
 
-## Publish it on GitHub Pages
+## Adding a new project
 
-1. Create a new repository on GitHub (or use an existing one). If you want
-   it at `https://<your-username>.github.io`, the repo must be named exactly
-   `<your-username>.github.io`. Any other name works too — it'll just live
-   at `https://<your-username>.github.io/<repo-name>/`.
-2. Add these three files to the repo root and push:
-   ```bash
-   git init
-   git add index.html style.css script.js README.md
-   git commit -m "Initial site"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/<repo-name>.git
-   git push -u origin main
-   ```
-3. On GitHub, go to **Settings → Pages**.
-4. Under **Build and deployment**, set **Source** to "Deploy from a branch,"
-   pick the **main** branch and the **/ (root)** folder, then **Save**.
-5. GitHub will give you a URL (usually live within a minute or two) — that's
-   your site.
+1. Copy an existing project page (for example `cmth-ruler.html`) and rename it.
+2. Create `assets/images/<project-name>/` and put its pictures and videos there.
+3. Point the page's `<img src>` paths at `assets/images/<project-name>/...`.
+4. In `index.html`, copy one `<div class="slot">` book block into a shelf, change
+   the title, blurb, color class, `--h` / `--w` size, and set its `href` to the new page.
 
-## Editing content
+## File naming
 
-Everything text-based lives directly in `index.html`, organized by section
-(`<!-- ABOUT -->`, `<!-- CAREER -->`, `<!-- PROJECTS -->`, etc.). The colors,
-type, and spacing all live in `style.css` as CSS custom properties at the
-top of the file (`:root { --paper: ...; --brick: ...; }`) if you want to
-retune the palette.
+Use lowercase letters, numbers, and hyphens only (no spaces). GitHub Pages is
+case-sensitive, so `Empty.jpg` and `empty.jpg` are different files.
 
-## Things worth double-checking before you publish
+## Publish on GitHub Pages
 
-- The career timeline and company names were assembled from public sources
-  (your LinkedIn profile and an interview you gave) — please check the
-  dates and titles against your own record and adjust anything that's off.
-- Swap in your GitHub profile/repo links wherever you'd like them to
-  appear — none are included yet since I didn't have that username.
-- The contact email (`kyle@drawnav.com`) was pulled from your own public
-  Drawing Navigator site — replace it if you'd rather use something else.
+1. Push the whole folder to the root of your repository.
+2. In **Settings → Pages**, set the source to the `main` branch and `/ (root)`.
