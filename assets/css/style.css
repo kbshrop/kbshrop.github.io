@@ -149,6 +149,14 @@ a:focus-visible, button:focus-visible {
   .tb-nav a { padding: 0 10px; font-size: 11px; }
 }
 
+/* Very narrow phones: drop the name so all five nav links fit on one line. */
+@media (max-width: 560px) {
+  .tb-name { display: none; }
+  .titleblock .wrap { padding: 0 8px; }
+  .tb-nav { width: 100%; }
+  .tb-nav a { flex: 1; justify-content: center; padding: 0 4px; font-size: 10px; letter-spacing: 0.04em; }
+}
+
 /* ---------- Hero -------------------------------------------------------- */
 
 .hero { padding: 64px 0 24px; }
@@ -461,6 +469,7 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
 .book-charcoal { --c: var(--charcoal); --band: var(--orange); }
 .book-plaster  { --c: var(--plaster-deep); --ink: var(--walnut-dark); --band: var(--olive); }
 .book-walnut-mid { --c: var(--olive-deep); --band: var(--orange); }
+.book-clock { --c: var(--walnut); --band: var(--brass-light); }
 
 .shelf-object { flex: none; margin-left: 10px; }
 
@@ -506,7 +515,7 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
 .slot.edge-l:hover .pop, .slot.edge-l:focus-within .pop, .slot.edge-l.open .pop,
 .slot.edge-r:hover .pop, .slot.edge-r:focus-within .pop, .slot.edge-r.open .pop { transform: none; }
 
-@media (max-width: 480px) { .pop { width: 200px; } }
+@media (max-width: 480px) { .pop { width: 200px; } .shelf-object { display: none; } }
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
 .tag {

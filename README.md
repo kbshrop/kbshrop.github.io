@@ -13,6 +13,7 @@ index.html                  <- the one and only homepage (must stay at the root)
 mise-timer.html             <- project pages live at the root, one per project
 spice-rack.html
 cmth-ruler.html
+ish.html
 README.md
 assets/
 ├── css/
