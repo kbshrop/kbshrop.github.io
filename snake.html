@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake — Kyle Shropshire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plaster: #F4EFE3;
+  --plaster-deep: #EAE0CB;
+  --ink: #241C15;
+  --ink-soft: #5C4E3F;
+  --walnut-dark: #382519;
+  --walnut: #6B4A30;
+  --walnut-light: #9C7250;
+  --olive: #5B6B3D;
+  --olive-deep: #3E4A29;
+  --brass: #B08D4F;
+  --brass-light: #DCC38C;
+  --orange: #E4611C;
+  --line: rgba(36, 28, 21, 0.22);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--plaster);
+  color: var(--ink);
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: "League Spartan", sans-serif; font-weight: 700; letter-spacing: -0.01em; margin: 0; color: var(--ink); }
+button, input { font: inherit; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+/* title block (name only, no navigation) */
+.titleblock { border-bottom: 2px solid var(--ink); }
+.titleblock .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; gap: 16px; }
+.tb-name { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0.01em; white-space: nowrap; }
+.tb-home { margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.tb-home:hover { color: var(--orange); }
+.tb-sheet { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; letter-spacing: 0.08em; color: var(--ink-soft); }
+
+.hero { text-align: center; padding: 48px 0 36px; }
+.hero h1 { font-size: clamp(42px, 7vw, 72px); line-height: 0.98; }
+.hero p { color: var(--ink-soft); font-size: 18px; max-width: 520px; margin: 16px auto 0; text-wrap: balance; }
+
+.game-grid { display: grid; grid-template-columns: minmax(0, 504px) minmax(0, 1fr); gap: 48px; align-items: start; padding-bottom: 72px; justify-content: center; }
+@media (max-width: 860px) { .game-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; max-width: 504px; margin: 0 auto; } }
+
+/* the board, framed like the site's walnut bookcase */
+.frame {
+  position: relative;
+  border: 12px solid var(--walnut);
+  outline: 2px solid var(--walnut-dark);
+  background: var(--walnut-dark);
+  box-shadow: 8px 8px 0 var(--walnut-dark);
+  line-height: 0;
+}
+#board { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; touch-action: none; }
+
+.overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px; text-align: center; line-height: 1.5;
+  background: rgba(36, 28, 21, 0.84);
+  color: var(--plaster);
+}
+.overlay[hidden] { display: none; }
+.overlay h2 { color: var(--plaster); font-size: clamp(30px, 6vw, 44px); line-height: 1; }
+.overlay p { margin: 0; color: var(--brass-light); font-size: 15px; max-width: 30ch; }
+.overlay form { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.overlay form[hidden] { display: none; }
+.overlay label { flex-basis: 100%; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brass-light); }
+.overlay input {
+  width: 11em; padding: 10px 12px; border: 2px solid var(--brass); background: var(--plaster); color: var(--ink); border-radius: 0;
+}
+.btn {
+  font-family: "IBM Plex Mono", monospace; font-size: 14px; letter-spacing: 0.02em; cursor: pointer;
+  color: var(--walnut-dark); background: var(--brass); border: 2px solid var(--brass); padding: 10px 18px; border-radius: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover { background: var(--orange); border-color: var(--orange); }
+.btn[hidden] { display: none; }
+.speed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0; }
+.speed[hidden] { display: none; }
+.speed-label { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brass-light); }
+.speed-opts { display: flex; gap: 8px; }
+.speed-opt {
+  font-family: "IBM Plex Mono", monospace; font-size: 15px; font-weight: 600; cursor: pointer; min-width: 3.2em;
+  color: var(--brass-light); background: transparent; border: 2px solid var(--brass); padding: 8px 10px; border-radius: 0;
+}
+.speed-opt:hover { border-color: var(--orange); }
+.speed-opt[aria-pressed="true"] { background: var(--brass); color: var(--walnut-dark); }
+
+/* side cards */
+.side { display: grid; gap: 24px; }
+.card { border: 2px solid var(--walnut-dark); border-left: 6px solid var(--olive); background: var(--plaster-deep); padding: 20px 22px; }
+.card h2 { font-size: 22px; margin-bottom: 12px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0; }
+.stats dt { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+.stats dd { margin: 2px 0 0; font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 40px; line-height: 1; }
+.scores { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+.scores li {
+  counter-increment: rank;
+  display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px; align-items: baseline;
+  padding: 5px 0; border-bottom: 1px solid var(--line);
+  font-family: "IBM Plex Mono", monospace; font-size: 14px;
+}
+.scores li::before { content: counter(rank); color: var(--ink-soft); }
+.scores li:last-child { border-bottom: 0; }
+.scores .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.scores .pts { font-weight: 600; }
+.scores .empty { color: rgba(36, 28, 21, 0.35); }
+.scores li.new { background: rgba(228, 97, 28, 0.16); }
+.linkish { margin-top: 12px; background: none; border: 0; padding: 0; color: var(--ink-soft); font-family: "IBM Plex Mono", monospace; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkish:hover { color: var(--orange); }
+.how { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14.5px; }
+.how dt { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); padding-top: 2px; }
+.how dd { margin: 0; font-weight: 600; }
+
+.footer-titleblock { border-top: 2px solid var(--ink); }
+.footer-titleblock .wrap { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 18px 28px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); justify-content: space-between; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.001ms !important; } }
+</style>
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap">
+    <span class="tb-name">Kyle Shropshire</span>
+    <a class="tb-home" href="index.html">Home</a>
+    <span class="tb-sheet">Game Room</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <h1>Snake</h1>
+    <p>Eat the atoms, grow longer, and stay off the walls and your own tail.</p>
+  </section>
+
+  <div class="wrap game-grid">
+    <div class="frame">
+      <canvas id="board" aria-label="Snake game board. Steer with the arrow keys or W, A, S and D."></canvas>
+      <div class="overlay" id="overlay">
+        <h2 id="ov-title">Ready?</h2>
+        <p id="ov-text">Press Space or a direction key to start.</p>
+        <form id="ov-form" hidden>
+          <label for="ov-name">Name for the high score list</label>
+          <input id="ov-name" type="text" maxlength="12" autocomplete="off" spellcheck="false">
+          <button type="submit" class="btn">Save score</button>
+        </form>
+        <div class="speed" id="speed">
+          <span class="speed-label" id="speed-label">Speed &amp; score multiplier</span>
+          <div class="speed-opts" role="group" aria-labelledby="speed-label">
+            <button type="button" class="speed-opt" data-mult="1" aria-pressed="true">1x</button>
+            <button type="button" class="speed-opt" data-mult="2" aria-pressed="false">2x</button>
+            <button type="button" class="speed-opt" data-mult="4" aria-pressed="false">4x</button>          </div>
+        </div>
+        <button type="button" class="btn" id="ov-btn">Start</button>
+      </div>
+    </div>
+
+    <aside class="side">
+      <section class="card" aria-label="Score">
+        <dl class="stats">
+          <div><dt>Score</dt><dd id="score">0</dd></div>
+          <div><dt>Best</dt><dd id="best">0</dd></div>
+          <div><dt>Multiplier</dt><dd id="mult-show">1x</dd></div>
+        </dl>
+      </section>
+
+      <section class="card" aria-labelledby="hs-h">
+        <h2 id="hs-h">High scores</h2>
+        <ol class="scores" id="scores"></ol>
+        <button type="button" class="linkish" id="clear">Clear list</button>
+      </section>
+
+      <section class="card" aria-labelledby="how-h">
+        <h2 id="how-h">Controls</h2>
+        <dl class="how">
+          <dt>Move</dt><dd>Arrow keys or W A S D</dd>
+          <dt>Pause</dt><dd>Space or P</dd>
+          <dt>Touch</dt><dd>Swipe on the board</dd>
+        </dl>
+      </section>
+    </aside>
+  </div>
+  <p class="sr" id="live" role="status" aria-live="polite"></p>
+</main>
+
+<footer class="footer-titleblock">
+  <div class="wrap">
+    <span>Kyle Shropshire</span>
+    <span>Snake</span>
+    <span>Scores are saved in this browser only</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var COLS = 20, ROWS = 20, CELL = 24, W = COLS * CELL, H = ROWS * CELL;
+  var MULT_KEY = 'ks-snake-mult', SCORE_KEY = 'ks-snake-scores-v1', NAME_KEY = 'ks-snake-name', MAX_SCORES = 10;
+
+  var canvas = document.getElementById('board');
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 3);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  var COLOR = {
+    bg: '#2A1B11', bg2: '#2F1F14', dot: 'rgba(220,195,140,0.18)',
+    olive: '#5B6B3D', oliveSoft: '#7C8A59', brass: '#B08D4F', brassLight: '#DCC38C',
+    orange: '#E4611C', plaster: '#F4EFE3', ink: '#241C15'
+  };
+
+  var el = {
+    overlay: document.getElementById('overlay'), title: document.getElementById('ov-title'),
+    text: document.getElementById('ov-text'), form: document.getElementById('ov-form'),
+    name: document.getElementById('ov-name'), btn: document.getElementById('ov-btn'),
+    score: document.getElementById('score'), best: document.getElementById('best'),
+    scores: document.getElementById('scores'), clear: document.getElementById('clear'),
+    live: document.getElementById('live'),
+    speed: document.getElementById('speed'), multShow: document.getElementById('mult-show')
+  };
+
+  // ---------- storage (every access guarded: private windows can throw) ----------
+  function loadScores() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
+      if (!Array.isArray(raw)) return [];
+      return raw.filter(function (s) { return s && typeof s.score === 'number'; })
+        .map(function (s) { return { name: String(s.name || 'Anon').slice(0, 12), score: s.score }; })
+        .sort(function (a, b) { return b.score - a.score; }).slice(0, MAX_SCORES);
+    } catch (e) { return []; }
+  }
+  function saveScores(list) { try { localStorage.setItem(SCORE_KEY, JSON.stringify(list)); } catch (e) {} }
+  function loadName() { try { return localStorage.getItem(NAME_KEY) || ''; } catch (e) { return ''; } }
+  function saveName(n) { try { localStorage.setItem(NAME_KEY, n); } catch (e) {} }
+
+  var MULTS = [1, 2, 4];
+  var mult = 1;
+  try { var m = parseInt(localStorage.getItem(MULT_KEY), 10); if (MULTS.indexOf(m) !== -1) mult = m; } catch (e) {}
+
+  function setMult(m) {
+    mult = m;
+    try { localStorage.setItem(MULT_KEY, String(m)); } catch (e) {}
+    Array.prototype.forEach.call(el.speed.querySelectorAll('.speed-opt'), function (b) {
+      b.setAttribute('aria-pressed', String(+b.getAttribute('data-mult') === m));
+    });
+    el.multShow.textContent = m + 'x';
+  }
+  Array.prototype.forEach.call(el.speed.querySelectorAll('.speed-opt'), function (b) {
+    b.addEventListener('click', function () { setMult(+b.getAttribute('data-mult')); });
+  });
+
+  var scores = loadScores();
+  var justAdded = -1;
+
+  function renderScores() {
+    el.scores.innerHTML = '';
+    for (var i = 0; i < MAX_SCORES; i++) {
+      var li = document.createElement('li');
+      var name = document.createElement('span');
+      var pts = document.createElement('span');
+      name.className = 'name'; pts.className = 'pts';
+      if (scores[i]) {
+        name.textContent = scores[i].name; pts.textContent = scores[i].score;
+        if (i === justAdded) li.className = 'new';
+      } else {
+        li.className = 'empty'; name.textContent = '—'; pts.textContent = '';
+      }
+      li.appendChild(name); li.appendChild(pts);
+      el.scores.appendChild(li);
+    }
+    el.best.textContent = scores.length ? scores[0].score : 0;
+  }
+
+  function qualifies(s) {
+    return s > 0 && (scores.length < MAX_SCORES || s > scores[scores.length - 1].score);
+  }
+
+  // ---------- game state ----------
+  var snake, dir, queue, food, score, foods, state, timer;
+  // state: 'ready' | 'running' | 'paused' | 'over'
+
+  function reset() {
+    snake = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
+    dir = { x: 1, y: 0 };
+    queue = [];
+    score = 0; foods = 0;
+    el.score.textContent = '0';
+    placeFood();
+    draw();
+  }
+
+  function placeFood() {
+    var free = [];
+    for (var x = 0; x < COLS; x++) for (var y = 0; y < ROWS; y++) {
+      if (!snake.some(function (s) { return s.x === x && s.y === y; })) free.push({ x: x, y: y });
+    }
+    if (!free.length) return false;
+    food = free[Math.floor(Math.random() * free.length)];
+    return true;
+  }
+
+  function delay() { return Math.max(70, 150 - foods * 3) / mult; }
+  function schedule() { clearTimeout(timer); timer = setTimeout(step, delay()); }
+
+  function turn(d) {
+    var last = queue.length ? queue[queue.length - 1] : dir;
+    if ((d.x === last.x && d.y === last.y) || (d.x === -last.x && d.y === -last.y)) return;
+    if (queue.length < 2) queue.push(d);
+  }
+
+  function step() {
+    if (state !== 'running') return;
+    if (queue.length) dir = queue.shift();
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) return gameOver(false);
+    var eating = head.x === food.x && head.y === food.y;
+    var body = eating ? snake : snake.slice(0, -1);
+    for (var i = 0; i < body.length; i++) if (body[i].x === head.x && body[i].y === head.y) return gameOver(false);
+    snake.unshift(head);
+    if (eating) {
+      score += 10 * mult; foods++;
+      el.score.textContent = score;
+      if (!placeFood()) { draw(); return gameOver(true); }
+    } else {
+      snake.pop();
+    }
+    draw();
+    schedule();
+  }
+
+  // ---------- state changes ----------
+  function showOverlay(title, text, btnLabel, withForm) {
+    el.title.textContent = title;
+    el.text.textContent = text;
+    el.btn.textContent = btnLabel;
+    el.btn.hidden = !!withForm;
+    el.form.hidden = !withForm;
+    el.speed.hidden = state === 'paused' || !!withForm;   // multiplier is locked once a game is underway
+    el.overlay.hidden = false;
+  }
+  function hideOverlay() { el.overlay.hidden = true; }
+
+  function start() {
+    reset();
+    justAdded = -1; renderScores();
+    state = 'running';
+    hideOverlay();
+    el.live.textContent = 'Game started';
+    schedule();
+  }
+  function pause() {
+    if (state !== 'running') return;
+    state = 'paused'; clearTimeout(timer);
+    showOverlay('Paused', 'Press Space or P to keep going.', 'Resume', false);
+    el.live.textContent = 'Paused';
+  }
+  function resume() {
+    if (state !== 'paused') return;
+    state = 'running'; hideOverlay(); el.live.textContent = 'Resumed'; schedule();
+  }
+  function gameOver(won) {
+    state = 'over'; clearTimeout(timer); draw();
+    var title = won ? 'You filled the board!' : 'Game over';
+    var text = 'You scored ' + score + '.';
+    if (qualifies(score)) {
+      showOverlay(title, text + ' That makes the high score list.', '', true);
+      el.name.value = loadName();
+      el.name.focus(); el.name.select();
+    } else {
+      showOverlay(title, text, 'Play again', false);
+      el.btn.focus();
+    }
+    el.live.textContent = title + ' ' + text;
+  }
+
+  el.form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = el.name.value.replace(/\s+/g, ' ').trim().slice(0, 12) || 'Anon';
+    saveName(name);
+    var entry = { name: name, score: score };
+    scores.push(entry);
+    scores.sort(function (a, b) { return b.score - a.score; });
+    scores = scores.slice(0, MAX_SCORES);
+    justAdded = scores.indexOf(entry);
+    saveScores(scores);
+    renderScores();
+    showOverlay('Saved', name + ' scored ' + score + '.', 'Play again', false);
+    el.btn.focus();
+  });
+
+  el.btn.addEventListener('click', function () {
+    if (state === 'paused') resume(); else start();
+  });
+
+  el.clear.addEventListener('click', function () {
+    if (!scores.length) return;
+    if (window.confirm('Clear all saved high scores in this browser?')) {
+      scores = []; justAdded = -1; saveScores(scores); renderScores();
+    }
+  });
+
+  // ---------- input ----------
+  var DIRS = {
+    arrowup: { x: 0, y: -1 }, w: { x: 0, y: -1 },
+    arrowdown: { x: 0, y: 1 }, s: { x: 0, y: 1 },
+    arrowleft: { x: -1, y: 0 }, a: { x: -1, y: 0 },
+    arrowright: { x: 1, y: 0 }, d: { x: 1, y: 0 }
+  };
+
+  function steer(d) {
+    if (state === 'ready') start();
+    else if (state === 'paused') resume();
+    if (state === 'running') turn(d);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    if (t && t.tagName === 'INPUT') return;
+    var key = e.key.length === 1 ? e.key.toLowerCase() : e.key.toLowerCase();
+    var d = DIRS[key];
+    if (d) {
+      e.preventDefault();          // keep arrow keys from scrolling the page
+      steer(d);
+      return;
+    }
+    var onButton = t && t.tagName === 'BUTTON';
+    if (key === ' ' || key === 'spacebar' || key === 'p') {
+      if (onButton && key === ' ') return;   // let a focused button handle its own Space
+      e.preventDefault();
+      if (state === 'running') pause();
+      else if (state === 'paused') resume();
+      else if (state === 'ready' || (state === 'over' && el.form.hidden)) start();
+    } else if (key === 'enter' && !onButton && (state === 'ready' || (state === 'over' && el.form.hidden))) {
+      e.preventDefault(); start();
+    }
+  });
+
+  // swipe on the board
+  var touchStart = null;
+  canvas.addEventListener('touchstart', function (e) {
+    var t = e.changedTouches[0]; touchStart = { x: t.clientX, y: t.clientY };
+  }, { passive: true });
+  canvas.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+  canvas.addEventListener('touchend', function (e) {
+    if (!touchStart) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - touchStart.x, dy = t.clientY - touchStart.y;
+    touchStart = null;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+    steer(Math.abs(dx) > Math.abs(dy) ? { x: dx > 0 ? 1 : -1, y: 0 } : { x: 0, y: dy > 0 ? 1 : -1 });
+  });
+
+  document.addEventListener('visibilitychange', function () { if (document.hidden) pause(); });
+
+  // ---------- drawing ----------
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawBoard() {
+    for (var x = 0; x < COLS; x++) for (var y = 0; y < ROWS; y++) {
+      ctx.fillStyle = (x + y) % 2 ? COLOR.bg : COLOR.bg2;      // subtle paneling
+      ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+      ctx.fillStyle = COLOR.dot;                               // breeze-block dot
+      ctx.beginPath();
+      ctx.arc(x * CELL + CELL / 2, y * CELL + CELL / 2, 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawFood() {
+    var cx = food.x * CELL + CELL / 2, cy = food.y * CELL + CELL / 2;
+    ctx.strokeStyle = COLOR.brassLight; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    for (var i = 0; i < 8; i++) {                               // atomic-age starburst
+      var a = i * Math.PI / 4;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * 7, cy + Math.sin(a) * 7);
+      ctx.lineTo(cx + Math.cos(a) * 10.5, cy + Math.sin(a) * 10.5);
+      ctx.stroke();
+    }
+    ctx.fillStyle = COLOR.orange;
+    ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = COLOR.plaster;
+    ctx.beginPath(); ctx.arc(cx - 1.8, cy - 1.8, 1.6, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawSnake() {
+    for (var i = snake.length - 1; i >= 0; i--) {
+      var s = snake[i], pad = i === 0 ? 1 : 2.5;
+      ctx.fillStyle = i === 0 ? COLOR.brass : (i % 2 ? COLOR.olive : COLOR.oliveSoft);
+      roundRect(s.x * CELL + pad, s.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, i === 0 ? 8 : 6);
+      ctx.fill();
+    }
+    // eyes, set on the side of the head the snake is facing
+    var h = snake[0], cx = h.x * CELL + CELL / 2, cy = h.y * CELL + CELL / 2;
+    var fx = dir.x * 5, fy = dir.y * 5, px = -dir.y * 4.5, py = dir.x * 4.5;
+    ctx.fillStyle = COLOR.ink;
+    [1, -1].forEach(function (side) {
+      ctx.beginPath();
+      ctx.arc(cx + fx * 0.6 + px * side, cy + fy * 0.6 + py * side, 2.1, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function draw() {
+    drawBoard();
+    if (food) drawFood();
+    if (snake) drawSnake();
+  }
+
+  // ---------- go ----------
+  state = 'ready';
+  setMult(mult);
+  reset();
+  renderScores();
+  showOverlay('Ready?', 'Pick a multiplier, then press Space or a direction key.', 'Start', false);
+})();
+</script>
+</body>
+</html>
