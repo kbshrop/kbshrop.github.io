@@ -10,9 +10,16 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <style>
+  .hero-toy { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .hero-toy:focus, .hero-toy:focus-visible { outline: none; }
+  @media (prefers-reduced-motion: reduce) { #hero-door-leaf { transition: none !important; } }
   .headshot { margin: 0 0 20px; max-width: 240px; border: 2px solid var(--walnut-dark); background: var(--plaster-deep); padding: 10px 10px 0; }
   .headshot img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; }
   .headshot figcaption { padding: 10px 2px 12px; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-soft); }
+
+  .shelf-clock { margin-left: auto; }
+  .shelf-stack { order: 1; margin-left: auto; }
+  @media (max-width: 1040px) { .shelf-clock, .shelf-extra { display: none; } }
 
   /* potted snake plant on the top shelf: a quiet link to the game */
   .plant-link { flex: none; display: block; margin-left: 10px; line-height: 0; }
@@ -36,8 +43,8 @@
     <nav class="tb-nav">
       <a href="#">Home</a>
       <a href="#about">About</a>
-      <a href="#career">Career</a>
       <a href="#projects">Projects</a>
+      <a href="#career">Career</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -55,99 +62,182 @@
     <div class="elevation-wrap">
       <svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="elevTitle elevDesc">
         <title id="elevTitle">Line elevation of a mid-century modern house</title>
-        <desc id="elevDesc">A drawn elevation of a butterfly-roof house used as a navigation diagram. Numbered callouts link to About, Career, Projects, and Contact.</desc>
+        <desc id="elevDesc">A drawn elevation of a two-volume flat-roof house, with a mid-century living room visible through its glass, used as a navigation diagram. Numbered callouts link to About, Projects, Career, and Contact.</desc>
 
         <!-- ground -->
         <line x1="30" y1="430" x2="1170" y2="430" class="elevation-ground"/>
 
-        <!-- carport (open structure, no walls) -->
-        <polyline points="30,196 100,150 230,150" class="elevation-line"/>
-        <line x1="100" y1="150" x2="100" y2="430" class="elevation-line-thin"/>
-        <line x1="40" y1="196" x2="40" y2="430" class="elevation-line-thin"/>
+        <!-- house: two volumes, flat roofs, still life visible through the low-wing glass.
+             Drawn in a 680x230 box and scaled up into the hero. -->
+        <g transform="translate(-38.75 59) scale(1.75)" stroke="#382519" stroke-linejoin="round" stroke-linecap="round">
+          <!-- tall entry volume -->
+          <rect x="110" y="80" width="170" height="132" fill="#EAE0CB" stroke-width="1.4"/>
+          <rect x="96" y="70" width="198" height="10" fill="#6B4A30" stroke-width="1.4"/>
+          <rect x="120" y="92" width="150" height="16" fill="#CFDCD3" stroke-width="1.1"/>
+          <g stroke-width="0.8"><line x1="150" y1="92" x2="150" y2="108"/><line x1="180" y1="92" x2="180" y2="108"/><line x1="210" y1="92" x2="210" y2="108"/><line x1="240" y1="92" x2="240" y2="108"/></g>
+          <rect x="122" y="130" width="50" height="82" fill="#CFDCD3" stroke-width="1.2"/>
+          <line x1="147" y1="130" x2="147" y2="212" stroke-width="0.8"/>
+          <g id="hero-door" class="hero-toy" role="button" tabindex="0" aria-pressed="false" aria-label="Front door (closed). Press to open it.">
+            <!-- robot-arm bench seen when the door swings open (drawn in a 68x134 box, scaled to fit) -->
+            <rect x="184" y="148" width="34" height="64" fill="#3B2A1D" stroke-width="1.2"/>
+            <clipPath id="doorClip"><rect x="185" y="149" width="32" height="62"/></clipPath>
+            <g clip-path="url(#doorClip)">
+              <g transform="translate(182.3 144.8) scale(0.55)" stroke="#382519" stroke-width="1" stroke-linejoin="round" stroke-linecap="round">
+                <ellipse cx="32" cy="40" rx="20" ry="14" fill="#FFD98A" fill-opacity="0.12" stroke="none"/>
+                <g fill="#6B4A30" stroke-width="0.8"><rect x="12" y="16" width="12" height="9"/><rect x="26" y="16" width="12" height="9"/><rect x="40" y="16" width="12" height="9"/></g>
+                <line x1="10" y1="27" x2="56" y2="27" stroke="#B08D4F" stroke-width="1.6"/>
+                <polygon points="26,6 38,6 40,12 24,12" fill="#E4611C"/>
+                <rect x="6" y="108" width="56" height="14" fill="#2A1B11" stroke="none"/>
+                <rect x="12" y="98" width="22" height="10" fill="#B08D4F"/>
 
-        <!-- main roofline: shallow butterfly, eaves high at the ends, low at center -->
-        <polyline points="230,150 550,200 870,150" class="elevation-line"/>
+                <!-- robot arm: three nested joints so each link carries the next -->
+                <g id="hero-arm-a">
+                  <line x1="23" y1="98" x2="30" y2="72" stroke-width="6.2"/><line x1="23" y1="98" x2="30" y2="72" stroke="#E4611C" stroke-width="3.6"/>
+                  <circle cx="23" cy="98" r="3.4" fill="#F4EFE3" stroke-width="0.8"/>
+                  <g id="hero-arm-b">
+                    <line x1="30" y1="72" x2="46" y2="56" stroke-width="6.2"/><line x1="30" y1="72" x2="46" y2="56" stroke="#E4611C" stroke-width="3.6"/>
+                    <circle cx="30" cy="72" r="3.4" fill="#F4EFE3" stroke-width="0.8"/>
+                    <g id="hero-arm-c">
+                      <line x1="46" y1="56" x2="52" y2="66" stroke-width="6.2"/><line x1="46" y1="56" x2="52" y2="66" stroke="#B08D4F" stroke-width="3.6"/>
+                      <path d="M50 68 L52 72 M54 68 L52 72" stroke="#DCC38C" stroke-width="1.2" fill="none"/>
+                      <circle cx="46" cy="56" r="3.4" fill="#F4EFE3" stroke-width="0.8"/>
+                    </g>
+                  </g>
+                </g>
 
-        <!-- structural posts -->
-        <line x1="230" y1="150" x2="230" y2="430" class="elevation-line-thin"/>
-        <line x1="390" y1="175" x2="390" y2="430" class="elevation-line-thin"/>
-        <line x1="550" y1="200" x2="550" y2="430" class="elevation-line-thin"/>
-        <line x1="710" y1="175" x2="710" y2="430" class="elevation-line-thin"/>
-        <line x1="870" y1="150" x2="870" y2="430" class="elevation-line"/>
+                <!-- teach pendant with a live readout -->
+                <rect x="38" y="92" width="20" height="16" fill="#5C4E3F"/>
+                <rect x="41" y="95" width="14" height="7" fill="#13261C" stroke-width="0.6"/>
+                <text id="hero-arm-readout" x="42" y="98.4" font-size="3.6" fill="#7CFFB0" font-family="monospace" stroke="none">J2 +00</text>
+                <polyline id="hero-arm-trace" points="42,100.8 44,100.8 46,100.8 48,100.8 50,100.8 52,100.8 54,100.8" fill="none" stroke="#7CFFB0" stroke-width="0.7"/>
+                <circle id="hero-arm-led" cx="43" cy="105" r="1.4" fill="#7CFFB0" stroke="none"/>
+                <circle cx="48" cy="105" r="1.4" fill="#E4611C" stroke="none"/>
+              </g>
+            </g>
+            <!-- the door leaf, hinged on its left edge -->
+            <g id="hero-door-leaf" style="transform-box: fill-box; transform-origin: 0% 50%; transition: transform 0.45s ease;">
+              <rect x="184" y="148" width="34" height="64" fill="#E4611C" stroke-width="1.2"/>
+              <circle cx="212" cy="182" r="1.4" fill="#382519" stroke="none"/>
+            </g>
+            <rect x="184" y="148" width="34" height="64" fill="transparent" stroke="none"/>
+          </g>
 
-        <!-- floor-to-ceiling glazing, left bay -->
-        <rect x="232" y="152" width="156" height="276" class="elevation-glass"/>
-        <g class="elevation-line-thin">
-          <line x1="270" y1="155" x2="270" y2="428"/>
-          <line x1="310" y1="160" x2="310" y2="428"/>
-          <line x1="350" y1="167" x2="350" y2="428"/>
-          <line x1="232" y1="300" x2="388" y2="300"/>
-        </g>
+          <!-- breeze block panel -->
+          <g fill="#B08D4F" stroke-width="0.8">
+            <rect x="230" y="130" width="18" height="16"/><rect x="252" y="130" width="18" height="16"/>
+            <rect x="230" y="150" width="18" height="16"/><rect x="252" y="150" width="18" height="16"/>
+            <rect x="230" y="170" width="18" height="16"/><rect x="252" y="170" width="18" height="16"/>
+            <rect x="230" y="190" width="18" height="16"/><rect x="252" y="190" width="18" height="16"/>
+          </g>
+          <g fill="#EAE0CB" stroke-width="0.6">
+            <circle cx="239" cy="138" r="5"/><circle cx="261" cy="138" r="5"/>
+            <circle cx="239" cy="158" r="5"/><circle cx="261" cy="158" r="5"/>
+            <circle cx="239" cy="178" r="5"/><circle cx="261" cy="178" r="5"/>
+            <circle cx="239" cy="198" r="5"/><circle cx="261" cy="198" r="5"/>
+          </g>
 
-        <!-- solid wall panel, right bay, with door + small window -->
-        <rect x="552" y="202" width="316" height="228" class="elevation-fill-paper" stroke="#382519" stroke-width="1.4"/>
-        <rect x="612" y="300" width="70" height="130" class="elevation-line-thin"/>
-        <circle cx="672" cy="365" r="2.4" fill="#382519"/>
-        <rect x="740" y="240" width="90" height="60" class="elevation-glass" stroke="#382519" stroke-width="1.4"/>
-        <line x1="785" y1="240" x2="785" y2="300" class="elevation-line-thin"/>
+          <!-- low wing, roof cantilevered past the glass on two posts -->
+          <rect x="280" y="130" width="230" height="82" fill="#EAE0CB" stroke-width="1.4"/>
+          <rect x="270" y="120" width="310" height="10" fill="#6B4A30" stroke-width="1.4"/>
+          <rect x="292" y="142" width="206" height="70" fill="#EAE0CB" stroke="none"/>
 
-        <!-- breeze block screen wall -->
-        <g stroke="#B08D4F" stroke-width="1.5" fill="none" opacity="0.9">
-          <rect x="900" y="330" width="100" height="100"/>
-          <rect x="905" y="335" width="21" height="21"/><circle cx="915.5" cy="345.5" r="8"/>
-          <rect x="931" y="335" width="21" height="21"/><circle cx="941.5" cy="345.5" r="8"/>
-          <rect x="957" y="335" width="21" height="21"/><circle cx="967.5" cy="345.5" r="8"/>
-          <rect x="905" y="361" width="21" height="21"/><circle cx="915.5" cy="371.5" r="8"/>
-          <rect x="931" y="361" width="21" height="21"/><circle cx="941.5" cy="371.5" r="8"/>
-          <rect x="957" y="361" width="21" height="21"/><circle cx="967.5" cy="371.5" r="8"/>
-          <rect x="905" y="387" width="21" height="21"/><circle cx="915.5" cy="397.5" r="8"/>
-          <rect x="931" y="387" width="21" height="21"/><circle cx="941.5" cy="397.5" r="8"/>
-          <rect x="957" y="387" width="21" height="21"/><circle cx="967.5" cy="397.5" r="8"/>
+          <!-- still life seen through the glass -->
+          <g stroke-width="0.9">
+            <line x1="338" y1="206" x2="336" y2="212"/><line x1="470" y1="206" x2="472" y2="212"/>
+            <rect x="330" y="190" width="148" height="16" fill="#6B4A30"/>
+            <line x1="404" y1="190" x2="404" y2="206"/>
+            <g id="hero-lamp" class="hero-toy" role="button" tabindex="0" aria-pressed="true" aria-label="Table lamp (on). Press to switch it off.">
+              <ellipse id="hero-lamp-glow" cx="350" cy="170" rx="30" ry="22" fill="#FFD98A" fill-opacity="0.4" stroke="none" pointer-events="none"/>
+              <rect x="328" y="150" width="44" height="42" fill="transparent" stroke="none"/>
+              <polygon id="hero-lamp-shade" points="342,156 358,156 365,170 335,170" fill="#E4611C"/>
+              <line x1="350" y1="170" x2="350" y2="182"/>
+              <circle cx="350" cy="186" r="4" fill="#B08D4F"/>
+            </g>
+            <rect x="392" y="185" width="30" height="5" fill="#5B6B3D"/>
+            <rect x="395" y="180" width="24" height="5" fill="#E4611C"/>
+            <rect x="398" y="175" width="18" height="5" fill="#F4EFE3"/>
+            <rect x="440" y="184" width="22" height="6" fill="#B08D4F"/>
+            <path d="M443 184 Q451 174 459 184" fill="none" stroke-width="1.6"/>
+            <rect x="464" y="150" width="26" height="34" fill="#6B4A30"/>
+            <rect x="467" y="153" width="20" height="28" fill="#F4EFE3" stroke-width="0.6"/>
+            <rect x="470" y="156" width="14" height="22" fill="#5B6B3D" stroke="none"/>
+            <circle cx="477" cy="164" r="4" fill="#E4611C" stroke="none"/>
+            <path d="M470 178 Q477 166 484 178 Z" fill="#B08D4F" stroke="none"/>
+          </g>
+          <g stroke="#B08D4F" stroke-width="1.2"><line x1="424" y1="146" x2="424" y2="149"/><line x1="424" y1="167" x2="424" y2="170"/><line x1="410" y1="158" x2="407" y2="158"/><line x1="438" y1="158" x2="441" y2="158"/></g>
+          <circle cx="424" cy="158" r="9" fill="#F4EFE3" stroke-width="1"/>
+          <g stroke-width="1"><line id="hero-clock-hour" x1="424" y1="158" x2="424" y2="153.5"/><line id="hero-clock-min" x1="424" y1="158" x2="424" y2="151"/></g>
+
+          <!-- faint glass tint and reflection streaks in front of the objects -->
+          <clipPath id="winClip"><rect x="292" y="142" width="206" height="70"/></clipPath>
+          <g clip-path="url(#winClip)" stroke="none" pointer-events="none">
+            <rect x="292" y="142" width="206" height="70" fill="#CFDCD3" fill-opacity="0.07"/>
+            <polygon points="318,142 334,142 296,212 280,212" fill="#FFFFFF" fill-opacity="0.13"/>
+            <polygon points="344,142 351,142 313,212 306,212" fill="#FFFFFF" fill-opacity="0.13"/>
+            <polygon points="426,142 442,142 404,212 388,212" fill="#FFFFFF" fill-opacity="0.1"/>
+            <polygon points="452,142 459,142 421,212 414,212" fill="#FFFFFF" fill-opacity="0.1"/>
+          </g>
+
+          <!-- glazing frame over the still life -->
+          <rect x="292" y="142" width="206" height="70" fill="none" stroke-width="1.2"/>
+          <g stroke-width="0.8"><line x1="343" y1="142" x2="343" y2="212"/><line x1="395" y1="142" x2="395" y2="212"/><line x1="446" y1="142" x2="446" y2="212"/></g>
+          <g stroke-width="1.8"><line x1="520" y1="130" x2="520" y2="212"/><line x1="560" y1="130" x2="560" y2="212"/></g>
         </g>
 
         <!-- mailbox -->
-        <line x1="1080" y1="380" x2="1080" y2="430" class="elevation-line-thin"/>
-        <rect x="1060" y="362" width="40" height="20" rx="8" class="elevation-line-thin" fill="none"/>
+        <g id="hero-mailbox" class="hero-toy" role="button" tabindex="0" aria-label="Mailbox. Press to put a letter in." transform="translate(1007 304) scale(0.7)" stroke="#382519" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="30" y="20" width="100" height="160" fill="transparent" stroke="none"/>
+          <line x1="80" y1="124" x2="52" y2="180"/><line x1="80" y1="124" x2="108" y2="180"/><line x1="80" y1="124" x2="80" y2="180" stroke-width="1.6"/>
+          <line x1="80" y1="52" x2="80" y2="36" stroke-width="1.8"/>
+          <circle cx="80" cy="32" r="4" fill="#E4611C" stroke-width="1.8"/>
+          <circle cx="80" cy="88" r="36" fill="#7C8A59"/>
+          <rect x="62" y="82" width="36" height="9" rx="3" fill="#382519"/>
+          <path d="M52 66 Q64 60 74 62" fill="none" stroke="#F4EFE3" stroke-width="2.6"/>
+          <g id="hero-letter" opacity="0" pointer-events="none" style="transform-box: fill-box; transform-origin: center;">
+            <rect x="64" y="77" width="32" height="20" fill="#F4EFE3" stroke-width="2"/>
+            <path d="M64 77 L80 90 L96 77" fill="none" stroke-width="1.6"/>
+          </g>
+        </g>
 
         <!-- dimension string under the building -->
         <g class="elevation-dim">
-          <line x1="230" y1="450" x2="870" y2="450"/>
-          <line x1="230" y1="444" x2="230" y2="456"/>
-          <line x1="870" y1="444" x2="870" y2="456"/>
+          <line x1="128" y1="450" x2="976" y2="450"/>
+          <line x1="128" y1="444" x2="128" y2="456"/>
+          <line x1="976" y1="444" x2="976" y2="456"/>
         </g>
-        <text x="550" y="446" class="elevation-dim-text">36'-0" TYP. FACADE</text>
+        <text x="552" y="446" class="elevation-dim-text">48'-0" OVERALL</text>
 
         <!-- ============ callouts ============ -->
         <!-- 01 About -> door -->
-        <line x1="672" y1="126" x2="672" y2="298" class="leader"/>
+        <line x1="313" y1="126" x2="313" y2="316" class="leader"/>
         <a href="#about" class="balloon-link" aria-label="Jump to About">
-          <circle cx="672" cy="108" r="20" class="balloon-circle"/>
-          <text x="672" y="109" class="balloon-num">01</text>
-          <text x="672" y="140" class="balloon-label" text-anchor="middle">About</text>
+          <circle cx="313" cy="108" r="20" class="balloon-circle"/>
+          <text x="313" y="109" class="balloon-num">01</text>
+          <text x="313" y="140" class="balloon-label" text-anchor="middle">About</text>
         </a>
 
-        <!-- 02 Career -> carport -->
-        <line x1="100" y1="126" x2="100" y2="148" class="leader"/>
-        <a href="#career" class="balloon-link" aria-label="Jump to Career">
-          <circle cx="100" cy="108" r="20" class="balloon-circle"/>
-          <text x="100" y="109" class="balloon-num">02</text>
-          <text x="100" y="140" class="balloon-label" text-anchor="middle">Career</text>
-        </a>
-
-        <!-- 03 Projects -> glazing -->
-        <line x1="310" y1="126" x2="310" y2="158" class="leader"/>
+        <!-- 02 Projects -> book stack -->
+        <line x1="600" y1="126" x2="660" y2="364" class="leader"/>
         <a href="#projects" class="balloon-link" aria-label="Jump to Projects">
-          <circle cx="310" cy="108" r="20" class="balloon-circle"/>
-          <text x="310" y="109" class="balloon-num">03</text>
-          <text x="310" y="140" class="balloon-label" text-anchor="middle">Projects</text>
+          <circle cx="600" cy="108" r="20" class="balloon-circle"/>
+          <text x="600" y="109" class="balloon-num">02</text>
+          <text x="600" y="140" class="balloon-label" text-anchor="middle">Projects</text>
+        </a>
+
+        <!-- 03 Career -> clock -->
+        <line x1="790" y1="126" x2="710" y2="318" class="leader"/>
+        <a href="#career" class="balloon-link" aria-label="Jump to Career">
+          <circle cx="790" cy="108" r="20" class="balloon-circle"/>
+          <text x="790" y="109" class="balloon-num">03</text>
+          <text x="790" y="140" class="balloon-label" text-anchor="middle">Career</text>
         </a>
 
         <!-- 04 Contact -> mailbox -->
-        <line x1="1080" y1="126" x2="1080" y2="360" class="leader"/>
+        <line x1="1063" y1="126" x2="1063" y2="318" class="leader"/>
         <a href="#contact" class="balloon-link" aria-label="Jump to Contact">
-          <circle cx="1080" cy="108" r="20" class="balloon-circle"/>
-          <text x="1080" y="109" class="balloon-num">04</text>
-          <text x="1080" y="140" class="balloon-label" text-anchor="middle">Contact</text>
+          <circle cx="1063" cy="108" r="20" class="balloon-circle"/>
+          <text x="1063" y="109" class="balloon-num">04</text>
+          <text x="1063" y="140" class="balloon-label" text-anchor="middle">Contact</text>
         </a>
       </svg>
       <p class="hero-caption">Callouts drawn the way Drawing Navigator balloons a part &mdash; click one to jump in.</p>
@@ -186,70 +276,9 @@
 
   <div class="breeze-divider" role="presentation"></div>
 
-  <!-- ============================= CAREER ============================= -->
-  <section id="career" class="panel wrap">
-    <p class="eyebrow"><span class="num">02</span> Career</p>
-    <h2>Drawn to scale.</h2>
-    <div class="scale-rule">
-      <div class="scale-line"></div>
-      <div class="milestones">
-        <div class="milestone">
-          <span class="milestone-dot"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">2008–2012</div>
-            <div class="milestone-role">Oklahoma State University</div>
-            <div class="milestone-desc">B.S. Mechanical Engineering. Picked up a "VBA for Engineers" elective that turned into a second career.</div>
-          </div>
-        </div>
-        <div class="milestone">
-          <span class="milestone-dot"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">2012–2018</div>
-            <div class="milestone-role">Oil &amp; Gas Design Engineer</div>
-            <div class="milestone-desc">Valve actuators and remote equipment, including a miniaturized manual hydraulic power system for remote valves.</div>
-          </div>
-        </div>
-        <div class="milestone">
-          <span class="milestone-dot"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">2014</div>
-            <div class="milestone-role">First Software Sale</div>
-            <div class="milestone-desc">Sold custom shipping crate software to a local business. The first time I made real money from programming.</div>
-          </div>
-        </div>
-        <div class="milestone">
-          <span class="milestone-dot"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">Aug 2018–Apr 2025</div>
-            <div class="milestone-role">Design Engineer, PrestonEastin</div>
-            <div class="milestone-desc">Designed $15.2M+ of custom robotic handling equipment across 156+ unique ETO builds; launched a new robotic headstock product line and mentored incoming engineers.</div>
-          </div>
-        </div>
-        <div class="milestone">
-          <span class="milestone-dot"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">2020</div>
-            <div class="milestone-role">Founded Drawing Navigator</div>
-            <div class="milestone-desc">Started a software company to turn stacks of CAD PDFs into a searchable, linked BOM system for engineers.</div>
-          </div>
-        </div>
-        <div class="milestone milestone-current">
-          <span class="milestone-dot milestone-dot-current"></span>
-          <div class="milestone-card">
-            <div class="milestone-year">Apr 2025–Present</div>
-            <div class="milestone-role">Principal Engineer, PrestonEastin</div>
-            <div class="milestone-desc">Running the engineering department day-to-day &mdash; project software, change-order process, and the interface between engineering and the rest of the company.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="breeze-divider" role="presentation"></div>
-
   <!-- ============================= PROJECTS ============================= -->
   <section id="projects" class="panel wrap">
-    <p class="eyebrow"><span class="num">03</span> Projects</p>
+    <p class="eyebrow"><span class="num">02</span> Projects</p>
     <h2>Side projects.</h2>
     <p class="shelf-hint">Pull a book off the shelf to open the project.</p>
 
@@ -323,6 +352,49 @@
             <line x1="46" y1="126" x2="49" y2="142" stroke="#382519" stroke-width="2.4" stroke-linecap="round"/>
           </svg>
         </a>
+
+        <!-- walnut bird -->
+        <svg class="shelf-object shelf-extra" width="142" height="129" viewBox="0 20 100 90" role="presentation" aria-hidden="true" focusable="false" style="overflow:visible">
+          <g stroke="#382519" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <line x1="44" y1="70" x2="43" y2="108" stroke="#B08D4F" stroke-width="3"/>
+            <line x1="56" y1="70" x2="57" y2="108" stroke="#B08D4F" stroke-width="3"/>
+            <path d="M30 62 L4 80 L14 88 L36 72 Z" fill="#B08D4F"/>
+            <ellipse cx="52" cy="60" rx="27" ry="15" transform="rotate(-18 52 60)" fill="#9C7250"/>
+            <path d="M40 58 Q52 52 66 56" fill="none" stroke="#6B4A30" stroke-width="1.6"/>
+            <circle cx="73" cy="36" r="10" fill="#9C7250"/>
+            <path d="M81 33 L96 38 L81 42 Z" fill="#E4611C"/>
+            <circle cx="74" cy="34" r="1.8" fill="#F4EFE3" stroke="none"/>
+          </g>
+        </svg>
+
+        <!-- atomic clock: shows the visitor's local time, updated each minute -->
+        <svg class="shelf-object shelf-clock" id="shelf-clock" width="184" height="206" viewBox="0 0 100 112" style="overflow:visible" role="presentation" aria-hidden="true" focusable="false">
+          <g stroke="#382519" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <g stroke-width="5.4"><line x1="46" y1="70" x2="38" y2="108"/><line x1="54" y1="70" x2="62" y2="108"/></g>
+            <g stroke="#B08D4F" stroke-width="2.4"><line x1="46" y1="70" x2="38" y2="108"/><line x1="54" y1="70" x2="62" y2="108"/></g>
+            <g fill="none" stroke-width="5">
+              <ellipse cx="50" cy="40" rx="38" ry="13"/>
+              <ellipse cx="50" cy="40" rx="38" ry="13" transform="rotate(60 50 40)"/>
+              <ellipse cx="50" cy="40" rx="38" ry="13" transform="rotate(120 50 40)"/>
+            </g>
+            <g fill="none" stroke="#B08D4F" stroke-width="2.4">
+              <ellipse cx="50" cy="40" rx="38" ry="13"/>
+              <ellipse cx="50" cy="40" rx="38" ry="13" transform="rotate(60 50 40)"/>
+              <ellipse cx="50" cy="40" rx="38" ry="13" transform="rotate(120 50 40)"/>
+            </g>
+            <g fill="#E4611C" stroke-width="1.5">
+              <circle cx="88" cy="40" r="3.4"/><circle cx="31" cy="73" r="3.4"/><circle cx="31" cy="7" r="3.4"/>
+            </g>
+            <circle cx="50" cy="40" r="17" fill="#F4EFE3"/>
+            <g stroke-width="1.6">
+              <line x1="50" y1="26" x2="50" y2="29.5"/><line x1="50" y1="54" x2="50" y2="50.5"/>
+              <line x1="36" y1="40" x2="39.5" y2="40"/><line x1="64" y1="40" x2="60.5" y2="40"/>
+            </g>
+            <line id="clock-hour" x1="50" y1="40" x2="50" y2="31" stroke-width="2.4"/>
+            <line id="clock-min" x1="50" y1="40" x2="50" y2="27" stroke-width="1.8"/>
+            <circle cx="50" cy="40" r="2" fill="#382519"/>
+          </g>
+        </svg>
       </div>
 
       <!-- BOTTOM SHELF -->
@@ -375,6 +447,53 @@
           </div>
         </div>
 
+        <!-- stack of books with a small plant -->
+        <svg class="shelf-object shelf-extra shelf-stack" width="150" height="135" viewBox="0 20 100 90" role="presentation" aria-hidden="true" focusable="false" style="overflow:visible">
+          <g stroke="#382519" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="10" y="92" width="80" height="16" fill="#5B6B3D"/>
+            <line x1="18" y1="92" x2="18" y2="108"/><line x1="22" y1="92" x2="22" y2="108" stroke="#DCC38C" stroke-width="1.4"/>
+            <rect x="18" y="77" width="64" height="15" fill="#E4611C"/>
+            <line x1="26" y1="77" x2="26" y2="92"/><line x1="30" y1="77" x2="30" y2="92" stroke="#DCC38C" stroke-width="1.4"/>
+            <rect x="24" y="64" width="52" height="13" fill="#F4EFE3"/>
+            <line x1="32" y1="64" x2="32" y2="77"/><line x1="36" y1="64" x2="36" y2="77" stroke="#B08D4F" stroke-width="1.4"/>
+            <path d="M50 56 C40 52 36 42 38 36 C44 40 48 46 50 56 Z" fill="#7C8A59"/>
+            <path d="M50 56 C60 52 64 42 62 36 C56 40 52 46 50 56 Z" fill="#7C8A59"/>
+            <path d="M50 56 C46 44 48 32 50 26 C52 32 54 44 50 56 Z" fill="#5B6B3D"/>
+            <path d="M40 64 L43 54 H57 L60 64 Z" fill="#B08D4F"/>
+          </g>
+        </svg>
+
+        <!-- record player -->
+        <svg class="shelf-object shelf-extra" width="195" height="117" viewBox="0 50 100 60" role="presentation" aria-hidden="true" focusable="false" style="overflow:visible">
+          <g stroke="#382519" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="14" y="104" width="8" height="4" fill="#382519"/><rect x="78" y="104" width="8" height="4" fill="#382519"/>
+            <rect x="8" y="70" width="84" height="34" fill="#9C7250"/>
+            <rect x="8" y="70" width="84" height="6" fill="#6B4A30"/>
+            <ellipse cx="40" cy="68" rx="28" ry="6" fill="#241C15"/>
+            <ellipse cx="40" cy="67" rx="22" ry="4" fill="none" stroke="#5C4E3F" stroke-width="1.2"/>
+            <ellipse cx="40" cy="67" rx="6" ry="1.8" fill="#E4611C" stroke-width="1.2"/>
+            <rect x="76" y="56" width="8" height="14" fill="#B08D4F"/>
+            <line x1="80" y1="58" x2="56" y2="67" stroke="#DCC38C" stroke-width="2.4"/>
+            <rect x="50" y="64" width="9" height="5" fill="#B08D4F"/>
+            <circle cx="24" cy="90" r="5" fill="#B08D4F"/><circle cx="38" cy="90" r="5" fill="#B08D4F"/>
+            <line x1="24" y1="87" x2="24" y2="90" stroke-width="1.4"/><line x1="38" y1="87" x2="40" y2="89" stroke-width="1.4"/>
+            <rect x="56" y="86" width="28" height="8" fill="#382519"/>
+            <line x1="60" y1="90" x2="80" y2="90" stroke="#E4611C" stroke-width="2"/>
+          </g>
+        </svg>
+
+        <!-- framed print -->
+        <svg class="shelf-object shelf-extra" width="108" height="135" viewBox="14 20 72 90" role="presentation" aria-hidden="true" focusable="false" style="overflow:visible">
+          <g stroke="#382519" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="18" y="24" width="64" height="84" fill="#6B4A30"/>
+            <rect x="24" y="30" width="52" height="72" fill="#F4EFE3"/>
+            <rect x="30" y="36" width="40" height="60" fill="#5B6B3D" stroke-width="1.5"/>
+            <path d="M30 96 Q50 62 70 96 Z" fill="#B08D4F" stroke-width="1.5"/>
+            <circle cx="50" cy="56" r="13" fill="#E4611C" stroke-width="1.5"/>
+            <circle cx="38" cy="46" r="2.4" fill="#F4EFE3" stroke="none"/><circle cx="62" cy="46" r="2.4" fill="#F4EFE3" stroke="none"/>
+          </g>
+        </svg>
+
         <!-- pottery vase -->
         <svg class="shelf-object" width="70" height="110" viewBox="0 0 70 110" role="presentation" aria-hidden="true">
           <path d="M28 4 H42 V26 C62 38 68 62 60 92 Q58 106 35 106 Q12 106 10 92 C2 62 8 38 28 26 Z"
@@ -383,6 +502,67 @@
         </svg>
       </div>
 
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <!-- ============================= CAREER ============================= -->
+  <section id="career" class="panel wrap">
+    <p class="eyebrow"><span class="num">03</span> Career</p>
+    <h2>Drawn to scale.</h2>
+    <div class="scale-rule">
+      <div class="scale-line"></div>
+      <div class="milestones">
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2008–2012</div>
+            <div class="milestone-role">Oklahoma State University</div>
+            <div class="milestone-desc">B.S. Mechanical Engineering. Picked up a "VBA for Engineers" elective that turned into a second career.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2012–2018</div>
+            <div class="milestone-role">Oil &amp; Gas Design Engineer</div>
+            <div class="milestone-desc">Valve actuators and remote equipment, including a miniaturized manual hydraulic power system for remote valves.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2014</div>
+            <div class="milestone-role">First Software Sale</div>
+            <div class="milestone-desc">Sold custom shipping crate software to a local business. The first time I made real money from programming.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">Aug 2018–Apr 2025</div>
+            <div class="milestone-role">Design Engineer, PrestonEastin</div>
+            <div class="milestone-desc">Designed $15.2M+ of custom robotic handling equipment across 156+ unique ETO builds; launched a new robotic headstock product line and mentored incoming engineers.</div>
+          </div>
+        </div>
+        <div class="milestone">
+          <span class="milestone-dot"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">2020</div>
+            <div class="milestone-role">Founded Drawing Navigator</div>
+            <div class="milestone-desc">Started a software company to turn stacks of CAD PDFs into a searchable, linked BOM system for engineers.</div>
+          </div>
+        </div>
+        <div class="milestone milestone-current">
+          <span class="milestone-dot milestone-dot-current"></span>
+          <div class="milestone-card">
+            <div class="milestone-year">Apr 2025–Present</div>
+            <div class="milestone-role">Principal Engineer, PrestonEastin</div>
+            <div class="milestone-desc">Running the engineering department day-to-day &mdash; project software, change-order process, and the interface between engineering and the rest of the company.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -396,6 +576,7 @@
         <a href="mailto:kyle@drawnav.com">kyle@drawnav.com</a>
         <a href="https://www.linkedin.com/in/kyleshropshiredrawnav/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://www.drawnav.com" target="_blank" rel="noopener">Drawing Navigator</a>
+        <a href="https://www.etsy.com/shop/EngineeringJudgement" target="_blank" rel="noopener">Etsy Shop</a>
       </div>
     </div>
     <div class="footer-titleblock">
