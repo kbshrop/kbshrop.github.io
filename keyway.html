@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keyway Dimensions — Kyle Shropshire</title>
+<meta name="description" content="Enter a shaft diameter and get the standard key size, keyseat dimensions, and limit tolerances with fit analysis (ISO 773 / DIN 6885, with ANSI B17.1 sizes).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .tool-grid { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 40px; align-items: start; }
+  @media (max-width: 860px) { .tool-grid { grid-template-columns: 1fr; } }
+
+  .controls { border: 2px solid var(--ink); background: var(--plaster-deep); padding: 22px 22px 24px; }
+  .controls label { display: block; font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin: 18px 0 6px; }
+  .controls label:first-child { margin-top: 0; }
+  .controls input[type="number"], .controls select {
+    width: 100%; font: 500 16px "IBM Plex Mono", monospace; color: var(--ink);
+    background: var(--plaster); border: 2px solid var(--ink); border-radius: 0; padding: 10px 12px;
+  }
+  .controls input:focus-visible, .controls select:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .seg { display: flex; border: 2px solid var(--ink); }
+  .seg button {
+    flex: 1; font: 600 13px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 10px 8px; border: 0; background: var(--plaster); color: var(--ink); cursor: pointer;
+  }
+  .seg button + button { border-left: 2px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--olive-deep); color: var(--plaster); }
+  .hint { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.45; }
+  .err { color: var(--orange); font-weight: 600; }
+
+  .readout { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: 0 0 18px; }
+  .readout .big { font-family: "League Spartan", sans-serif; font-weight: 900; font-size: clamp(34px, 5vw, 52px); line-height: 1; }
+  .readout .sub { font-family: "IBM Plex Mono", monospace; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .drawing { border: 2px solid var(--ink); background: var(--plaster); margin-bottom: 28px; }
+  .drawing svg { display: block; width: 100%; height: auto; max-height: 420px; }
+  .drawing figcaption { border-top: 2px solid var(--ink); padding: 8px 14px; font: 12px "IBM Plex Mono", monospace; letter-spacing: 0.06em; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  .tbl-wrap { overflow-x: auto; border: 2px solid var(--ink); }
+  table.limits { border-collapse: collapse; width: 100%; font-family: "IBM Plex Mono", monospace; font-size: 14px; min-width: 560px; }
+  table.limits th { text-align: left; background: var(--ink); color: var(--plaster); font-weight: 500; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 9px 12px; }
+  table.limits td { padding: 9px 12px; border-top: 1px solid var(--line); white-space: nowrap; }
+  table.limits td:first-child { font-family: "Libre Franklin", sans-serif; font-weight: 600; white-space: normal; }
+  table.limits td small { display: block; font: 12px "IBM Plex Mono", monospace; color: var(--ink-soft); }
+  table.limits tr.group td { background: var(--plaster-deep); font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+  table.limits td.na { color: var(--ink-soft); font-style: italic; }
+
+  .fits { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 28px; }
+  .fit-card { border: 2px solid var(--ink); padding: 14px 16px; background: var(--plaster); }
+  .fit-card h3 { font-size: 17px; margin-bottom: 6px; }
+  .fit-card .range { font: 500 18px "IBM Plex Mono", monospace; }
+  .fit-card .tag { display: inline-block; margin-top: 8px; font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; color: var(--plaster); }
+  .tag.clearance { background: var(--olive-deep); }
+  .tag.transition { background: var(--brass); color: var(--ink); }
+  .tag.interference { background: var(--orange); }
+
+  .tool-actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .tool-actions button { font: 600 13px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 16px; border: 2px solid var(--ink); background: var(--plaster); cursor: pointer; color: var(--ink); }
+  .tool-actions button:hover { background: var(--ink); color: var(--plaster); }
+  button.cp { font: inherit; color: inherit; background: none; border: 0; border-radius: 2px; padding: 1px 3px; margin: 0 -3px; cursor: pointer; }
+  button.cp:hover, button.cp:focus-visible { background: var(--brass-light); outline: none; }
+  button.cp.flash { background: var(--olive-deep); color: var(--plaster); }
+  tspan.cp { cursor: pointer; outline: none; }
+  tspan.cp:hover, tspan.cp:focus-visible { fill: var(--orange); }
+  tspan.cp.flash { fill: var(--olive); }
+  .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 12px); background: var(--ink); color: var(--plaster); font: 500 14px "IBM Plex Mono", monospace; padding: 10px 18px; opacity: 0; pointer-events: none; transition: opacity 0.15s, transform 0.15s; z-index: 100; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .warn { margin-top: 16px; padding: 9px 18px; background: var(--orange); color: var(--plaster); font: 500 14px "IBM Plex Mono", monospace; letter-spacing: 0.02em; line-height: 1.45; text-align: center; max-width: calc(var(--max) - 56px); }
+  .warn strong { font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-right: 6px; }
+  .note { border-left: 4px solid var(--orange); padding: 4px 0 4px 16px; margin: 0 0 28px; font-size: 15px; color: var(--ink-soft); max-width: 70ch; }
+  .note strong { color: var(--ink); }
+
+  #dr-hub { fill: var(--plaster-deep); stroke: var(--ink); stroke-width: 1.5; }
+  #dr-shaft { fill: var(--olive-soft); stroke: var(--ink); stroke-width: 1.5; }
+  .dr-void { fill: var(--plaster); stroke: none; }
+  #dr-key { fill: var(--brass); stroke: var(--ink); stroke-width: 1.5; }
+  .dim { stroke: var(--ink); stroke-width: 1; fill: none; }
+  .ext { stroke: var(--ink-soft); stroke-width: 0.8; stroke-dasharray: 3 3; fill: none; }
+  .dim-t { font: 500 13px "IBM Plex Mono", monospace; fill: var(--ink); }
+  .dim-s { fill: var(--ink-soft); font-size: 12px; }
+  .dim-v { font-weight: 600; font-size: 16px; }
+  .drawing { overflow-x: auto; }
+  .drawing svg { min-width: 640px; }
+</style>
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap">
+    <span class="tb-name">Kyle Shropshire</span>
+    <nav class="tb-nav">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#career">Career</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="warn wrap" role="alert"><strong>Not verified yet.</strong> Use at your own risk.</div>
+
+  <section class="hero wrap" style="padding: 24px 0 12px;">
+    <div class="hero-head">
+      <p class="eyebrow" style="justify-content:center;">Engineering Tool</p>
+      <h1>Keyway Dimensions</h1>
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation" style="height: 32px;"></div>
+
+  <section class="panel wrap" style="padding-top: 28px;">
+    <p class="eyebrow"><span class="num">01</span>Calculator</p>
+
+    <div class="tool-grid">
+      <!-- INPUTS -->
+      <div class="controls">
+        <label>Units / standard</label>
+        <div class="seg" role="group" aria-label="Units">
+          <button type="button" id="u-mm" aria-pressed="true">Metric · ISO</button>
+          <button type="button" id="u-in" aria-pressed="false">Inch · ANSI</button>
+        </div>
+
+        <label for="dia" id="dia-label">Shaft diameter d (mm)</label>
+        <input type="number" id="dia" value="40" step="any" inputmode="decimal" min="0">
+        <p class="hint" id="range-hint"></p>
+
+        <div id="fit-wrap">
+          <label for="fit">Key fit</label>
+          <select id="fit">
+            <option value="loose">Loose · H9 / D10</option>
+            <option value="normal" selected>Normal · N9 / JS9</option>
+            <option value="close">Close · P9 / P9</option>
+          </select>
+          <p class="hint" id="fit-hint">Shaft keyseat fit first, then hub keyseat fit. Normal is the usual choice for a key that slides on assembly and carries torque both ways. Close is for reversing or shock loads. Loose is for hubs that must slide along the shaft.</p>
+        </div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div>
+        <div class="readout" aria-live="polite">
+          <span class="big" id="out-key">—</span>
+          <span class="sub" id="out-std"></span>
+        </div>
+
+        <figure class="drawing">
+          <svg id="dr" viewBox="0 0 680 330" role="img" aria-label="Cross-section of a shaft, key, and hub with limit dimensions">
+            <circle id="dr-hub" cx="340" cy="165" r="150"/>
+            <circle class="dr-void" id="dr-bore" cx="340" cy="165" r="90"/>
+            <rect class="dr-void" id="dr-hubslot"/>
+            <circle id="dr-shaft" cx="340" cy="165" r="90"/>
+            <rect class="dr-void" id="dr-shaftslot"/>
+            <rect id="dr-key"/>
+            <g id="dr-dims"></g>
+          </svg>
+          <figcaption><span id="cap-l">Cross-section, true proportions</span><span id="cap-r"></span></figcaption>
+        </figure>
+
+        <div class="tbl-wrap">
+          <table class="limits">
+            <thead>
+              <tr><th>Feature</th><th>Nominal</th><th>Tolerance</th><th>Min</th><th>Max</th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <div class="fits" id="fits"></div>
+
+        <div class="tool-actions">
+          <button type="button" id="copy">Copy results</button>
+          <span class="hint" id="copy-msg" role="status"></span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top: 36px;"><strong>Sources.</strong> Metric: ISO 773 / DIN 6885-1 key sizes, with ISO 286 tolerances computed. Inch: ANSI B17.1 square keys, Class 1 and Class 2, with the ANSI B17.1 width and depth tolerances. Check results against the standard before cutting metal. Rectangular keys and taper keys are not covered yet.</p>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <section class="contact-panel">
+    <div class="wrap">
+      <p class="eyebrow"><span class="num"></span> Spot a mistake?</p>
+      <h2>Tell me and I'll fix it.</h2>
+      <p class="lede">If a value here disagrees with your copy of the standard, I want to know. Send me the standard, the table, and the size.</p>
+      <div class="contact-links">
+        <a href="mailto:kyle@drawnav.com?subject=Keyway%20tool%20feedback">Email me</a>
+      </div>
+    </div>
+    <div class="footer-titleblock">
+      <div class="wrap">
+        <span>Kyle Shropshire</span>
+        <span>Principal Engineer</span>
+        <span>Tulsa, OK</span>
+        <span>Keyway Tool</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- data ---------------- */
+
+  // ISO 773 / DIN 6885-1 parallel keys. [over d, up to and incl. d, b, h, t1 (shaft), t2 (hub)] in mm.
+  var METRIC = [
+    [6, 8, 2, 2, 1.2, 1.0], [8, 10, 3, 3, 1.8, 1.4], [10, 12, 4, 4, 2.5, 1.8],
+    [12, 17, 5, 5, 3.0, 2.3], [17, 22, 6, 6, 3.5, 2.8], [22, 30, 8, 7, 4.0, 3.3],
+    [30, 38, 10, 8, 5.0, 3.3], [38, 44, 12, 8, 5.0, 3.3], [44, 50, 14, 9, 5.5, 3.8],
+    [50, 58, 16, 10, 6.0, 4.3], [58, 65, 18, 11, 7.0, 4.4], [65, 75, 20, 12, 7.5, 4.9],
+    [75, 85, 22, 14, 9.0, 5.4], [85, 95, 25, 14, 9.0, 5.4], [95, 110, 28, 16, 10.0, 6.4],
+    [110, 130, 32, 18, 11, 7.4], [130, 150, 36, 20, 12, 8.4], [150, 170, 40, 22, 13, 9.4],
+    [170, 200, 45, 25, 15, 10.4], [200, 230, 50, 28, 17, 11.4], [230, 260, 56, 32, 20, 12.4],
+    [260, 290, 63, 32, 20, 12.4], [290, 330, 70, 36, 22, 14.4], [330, 380, 80, 40, 25, 15.4],
+    [380, 440, 90, 45, 28, 17.4], [440, 500, 100, 50, 31, 19.5]
+  ];
+
+  // ISO 286 values, micrometres, by nominal size step: <=3, <=6, <=10, <=18, <=30
+  var STEP = [3, 6, 10, 18, 30, 50, 80, 120];
+  var IT9  = [25, 30, 36, 43, 52, 62, 74, 87];
+  var IT10 = [40, 48, 58, 70, 84, 100, 120, 140];
+  var IT11 = [60, 75, 90, 110, 130, 160, 190, 220];
+  var N_ES = [-4, 0, 0, 0, 0, 0, 0, 0];    // upper deviation of N (grade 9): -4 um up to 3 mm, 0 above
+  var P_ES = [-6, -12, -15, -18, -22, -26, -32, -37];  // upper deviation of P (grade 9)
+  var D_EI = [20, 30, 40, 50, 65, 80, 100, 120];       // lower deviation of D
+
+  // ANSI B17.1 square keys: [over d, up to and incl. d, W = H] in inches.
+  var INCH = [
+    [0.3125, 0.4375, 3 / 32], [0.4375, 0.5625, 1 / 8], [0.5625, 0.875, 3 / 16],
+    [0.875, 1.25, 1 / 4], [1.25, 1.375, 5 / 16], [1.375, 1.75, 3 / 8],
+    [1.75, 2.25, 1 / 2], [2.25, 2.75, 5 / 8], [2.75, 3.25, 3 / 4],
+    [3.25, 3.75, 7 / 8], [3.75, 4.5, 1], [4.5, 5.5, 1.25], [5.5, 6.5, 1.5],
+    [6.5, 7.5, 1.75], [7.5, 9, 2], [9, 11, 2.5]
+  ];
+
+  /* ---------------- helpers ---------------- */
+
+  var $ = function (id) { return document.getElementById(id); };
+  var unit = "mm";
+
+  function stepIdx(size) { for (var i = 0; i < STEP.length; i++) if (size <= STEP[i]) return i; return STEP.length - 1; }
+
+  // number -> string, at least `min` decimals, trimming further trailing zeros
+  function num(v, max, min) {
+    var s = v.toFixed(max);
+    var dec = max;
+    while (dec > min && s.charAt(s.length - 1) === "0") { s = s.slice(0, -1); dec--; }
+    return /^-0(\.0*)?$/.test(s) ? s.slice(1) : s;
+  }
+  var mm = function (v) { return num(v, 4, 3); };
+  var inch = function (v) { return num(v, 4, 4); };
+  var fmt = function (v) { return unit === "mm" ? mm(v) : inch(v); };
+  function signed(v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + fmt(Math.abs(v)); }
+  function tol(upper, lower) {
+    if (Math.abs(upper + lower) < 1e-9 && upper > 0) return "±" + fmt(upper);
+    return signed(upper) + " / " + signed(lower);
+  }
+  // copyable numbers: the clipboard gets the plain number (ASCII minus, no plus sign) ready for CAD
+  function plain(s) { return s.replace(/^[+±]/, "").replace(/−/g, "-"); }
+  function htmlNum(s) {
+    if (!/^[−+±]?\d/.test(s)) return s;
+    return '<button type="button" class="cp" data-copy="' + plain(s) + '" title="Click to copy">' + s + "</button>";
+  }
+  function classify(min, max) {
+    if (min >= -1e-9) return ["clearance", "Clearance"];
+    if (max <= 1e-9) return ["interference", "Interference"];
+    return ["transition", "Transition"];
+  }
+
+  /* ---------------- calculation ---------------- */
+
+  function calcMetric(d, fit) {
+    var row = null;
+    for (var i = 0; i < METRIC.length; i++) if (d > METRIC[i][0] && d <= METRIC[i][1]) { row = METRIC[i]; break; }
+    if (!row) return null;
+    var b = row[2], h = row[3], t1 = row[4], t2 = row[5];
+    var sb = stepIdx(b), sh = stepIdx(h);
+    var u = 0.001; // um -> mm
+
+    var keyW = { nom: b, up: 0, lo: -IT9[sb] * u, std: "h9" };
+    var square = (b === h);
+    var keyH = square ? { nom: h, up: 0, lo: -IT9[sh] * u, std: "h9" } : { nom: h, up: 0, lo: -IT11[sh] * u, std: "h11" };
+
+    var shaftSlot, hubSlot;
+    if (fit === "loose") {
+      shaftSlot = { up: IT9[sb] * u, lo: 0, std: "H9" };
+      hubSlot = { up: (D_EI[sb] + IT10[sb]) * u, lo: D_EI[sb] * u, std: "D10" };
+    } else if (fit === "close") {
+      var p = { up: P_ES[sb] * u, lo: (P_ES[sb] - IT9[sb]) * u, std: "P9" };
+      shaftSlot = p; hubSlot = p;
+    } else {
+      shaftSlot = { up: N_ES[sb] * u, lo: (N_ES[sb] - IT9[sb]) * u, std: "N9" };
+      hubSlot = { up: IT9[sb] / 2 * u, lo: -IT9[sb] / 2 * u, std: "JS9" };
+    }
+
+    var dt = h <= 6 ? 0.1 : h < 20 ? 0.2 : 0.3; // depth tolerance on t1, t2
+
+    return {
+      unit: "mm", metric: true, d: d, b: b, h: h, t1: t1, t2: t2, dt: dt,
+      keyLabel: b + " × " + h + " mm", stdLabel: "Parallel key · ISO 773 / DIN 6885-1",
+      keyW: keyW, keyH: keyH, shaftSlot: shaftSlot, hubSlot: hubSlot,
+      g1: { nom: d - t1, up: 0, lo: -dt },   // gauge d − t1, slot bottom to far side of shaft
+      g2: { nom: d + t2, up: dt, lo: 0 }     // gauge d + t2, far side of bore to top of hub slot
+    };
+  }
+
+  // ANSI B17.1 square keys, side-fit classes (width tolerances by key width W, inches)
+  var C_ALLOW = 0.005;                        // clearance allowance C between key top and hub keyseat, square keys
+  function inchWidthTol(cls, w) {
+    var i, t;
+    if (cls === 1) {                          // [over W, up to W, key stock minus, keyseat plus]
+      t = [[0, 0.5, 0.002, 0.002], [0.5, 0.75, 0.002, 0.003], [0.75, 1, 0.003, 0.003], [1, 1.5, 0.003, 0.004], [1.5, 2.5, 0.004, 0.004], [2.5, 3.5, 0.006, 0.004]];
+      for (i = 0; i < t.length; i++) if (w > t[i][0] && w <= t[i][1]) return { key: { up: 0, lo: -t[i][2] }, slot: { up: t[i][3], lo: 0 } };
+    } else {                                  // [over W, up to W, key stock plus, keyseat plus]
+      t = [[0, 1.25, 0.001, 0.002], [1.25, 3, 0.002, 0.002], [3, 3.5, 0.003, 0.002]];
+      for (i = 0; i < t.length; i++) if (w > t[i][0] && w <= t[i][1]) return { key: { up: t[i][2], lo: 0 }, slot: { up: t[i][3], lo: 0 } };
+    }
+    return null;
+  }
+
+  function calcInch(d, cls) {
+    var row = null;
+    for (var i = 0; i < INCH.length; i++) if (d > INCH[i][0] && d <= INCH[i][1]) { row = INCH[i]; break; }
+    if (!row) return null;
+    var w = row[2];
+    var tl = inchWidthTol(cls, w);
+    var y = (d - Math.sqrt(d * d - w * w)) / 2;               // height of the chord across the keyseat
+    var frac = ["3/32", "1/8", "3/16", "1/4", "5/16", "3/8", "1/2", "5/8", "3/4", "7/8", "1", "1-1/4", "1-1/2", "1-3/4", "2", "2-1/2"][INCH.indexOf(row)];
+    var stock = cls === 1 ? "bar stock" : "key stock";
+    return {
+      unit: "in", metric: false, d: d, b: w, h: w, y: y, cls: cls,
+      keyLabel: frac + " × " + frac + " in", stdLabel: "Square key · ANSI B17.1 Class " + cls,
+      keyW: { nom: w, up: tl.key.up, lo: tl.key.lo, std: stock },
+      keyH: { nom: w, up: tl.key.up, lo: tl.key.lo, std: stock },
+      shaftSlot: { up: tl.slot.up, lo: tl.slot.lo, std: "Class " + cls },
+      hubSlot: { up: tl.slot.up, lo: tl.slot.lo, std: "Class " + cls },
+      g1: { nom: d - w / 2 - y, up: 0, lo: -0.015 },           // S = D − H/2 − Y
+      g2: { nom: d + w / 2 + C_ALLOW - y, up: 0.010, lo: 0 }   // T = D + H/2 + C − Y
+    };
+  }
+
+  /* ---------------- render ---------------- */
+
+  var last = null;
+
+  function render() {
+    var d = parseFloat($("dia").value);
+    var hint = $("range-hint");
+    var fit = $("fit").value;
+    var r = null;
+
+    if (unit === "mm") { hint.innerHTML = "Standard range: over 6 to 500 mm."; r = isFinite(d) ? calcMetric(d, fit) : null; }
+    else { hint.innerHTML = "Standard range: over 5/16 to 11 in (decimal inches)."; r = isFinite(d) ? calcInch(d, parseInt(fit, 10)) : null; }
+
+    if (!r) {
+      hint.innerHTML = '<span class="err">' + (isFinite(d) ? "That diameter is outside the standard table." : "Enter a shaft diameter.") + "</span> " + hint.innerHTML;
+      last = null;
+      $("out-key").textContent = "—"; $("out-std").textContent = "";
+      $("rows").innerHTML = ""; $("fits").innerHTML = ""; $("dr-dims").innerHTML = "";
+      ["dr-hubslot", "dr-shaftslot", "dr-key"].forEach(function (id) { $(id).setAttribute("width", 0); });
+      return;
+    }
+    last = r;
+    $("out-key").textContent = r.keyLabel;
+    $("out-std").textContent = r.stdLabel;
+    $("cap-r").textContent = "d = " + fmt(r.d) + (unit === "mm" ? " mm" : " in");
+
+    var rows = [];
+    function add(name, sub, nom, tolStr, mn, mx) { rows.push({ name: name, sub: sub, nom: nom, tol: tolStr, min: mn, max: mx }); }
+    function grp(name) { rows.push({ group: name }); }
+    var fits = [];
+
+    var kw = r.keyW, kh = r.keyH, ss = r.shaftSlot, hs = r.hubSlot, g1 = r.g1, g2 = r.g2;
+    var W = r.metric ? "b" : "W", H = r.metric ? "h" : "H";
+    var n1 = r.metric ? "d − t1" : "S", n2 = r.metric ? "d + t2" : "T";
+    function row(name, sub, o) { add(name, sub, fmt(o.nom), tol(o.up, o.lo), fmt(o.nom + o.lo), fmt(o.nom + o.up)); }
+
+    grp("Key");
+    row("Key width " + W, kw.std, kw);
+    row("Key height " + H, kh.std, kh);
+    grp("Shaft keyseat");
+    row("Keyseat width", ss.std, { nom: r.b, up: ss.up, lo: ss.lo });
+    if (r.metric) add("Depth t1", "from shaft surface at slot edge", fmt(r.t1), tol(r.dt, 0), fmt(r.t1), fmt(r.t1 + r.dt));
+    row("Gauge dimension " + n1, "slot bottom to opposite side of shaft", g1);
+    grp("Hub keyseat");
+    row("Keyseat width", hs.std, { nom: r.b, up: hs.up, lo: hs.lo });
+    if (r.metric) add("Depth t2", "from bore surface at slot edge", fmt(r.t2), tol(r.dt, 0), fmt(r.t2), fmt(r.t2 + r.dt));
+    row("Gauge dimension " + n2, r.metric ? "bore bottom to top of slot" : "bore bottom to top of slot, includes C = 0.005 in", g2);
+
+    // fits: clearance = slot - key
+    var f1min = (r.b + ss.lo) - (kw.nom + kw.up), f1max = (r.b + ss.up) - (kw.nom + kw.lo);
+    var f2min = (r.b + hs.lo) - (kw.nom + kw.up), f2max = (r.b + hs.up) - (kw.nom + kw.lo);
+    // key top to hub: top of hub slot minus top of key, both measured from the far side of the shaft
+    var f3min = (g2.nom + g2.lo) - (g1.nom + g1.up + kh.nom + kh.up), f3max = (g2.nom + g2.up) - (g1.nom + g1.lo + kh.nom + kh.lo);
+    fits.push(["Key in shaft keyseat", f1min, f1max, ss.std + " / " + kw.std]);
+    fits.push(["Key in hub keyseat", f2min, f2max, hs.std + " / " + kw.std]);
+    fits.push(["Key top to hub (radial)", f3min, f3max, n2 + " − (" + n1 + " + " + H + ")"]);
+
+    var html = "";
+    rows.forEach(function (x) {
+      if (x.group) { html += '<tr class="group"><td colspan="5">' + x.group + "</td></tr>"; return; }
+      var na = function (v) { return v === "—" || v === "see standard" ? ' class="na"' : ""; };
+      html += "<tr><td>" + x.name + (x.sub ? "<small>" + x.sub + "</small>" : "") + "</td><td>" + htmlNum(x.nom) + "</td><td" + na(x.tol) + ">" + x.tol.split(" / ").map(htmlNum).join(" / ") + "</td><td" + na(x.min) + ">" + htmlNum(x.min) + "</td><td" + na(x.max) + ">" + htmlNum(x.max) + "</td></tr>";
+    });
+    $("rows").innerHTML = html;
+
+    var fh = "";
+    fits.forEach(function (f) {
+      var c = classify(f[1], f[2]);
+      fh += '<div class="fit-card"><h3>' + f[0] + '</h3><div class="range">' + htmlNum(signed(f[1])) + " to " + htmlNum(signed(f[2])) + '</div><small class="hint">' + f[3] + '</small><br><span class="tag ' + c[0] + '">' + c[1] + "</span></div>";
+    });
+    $("fits").innerHTML = fh;
+
+    // limit dimensions shown on the drawing: [title, [min, max]] (a single value means nominal only)
+    r.cal = {
+      keyW: ["Key width " + W, [kw.nom + kw.lo, kw.nom + kw.up]],
+      keyH: ["Key height " + H, [kh.nom + kh.lo, kh.nom + kh.up]],
+      shaftW: ["Shaft slot width", [r.b + ss.lo, r.b + ss.up]],
+      hubW: ["Hub slot width", [r.b + hs.lo, r.b + hs.up]],
+      g1: ["Shaft gauge " + n1, [g1.nom + g1.lo, g1.nom + g1.up]],
+      g2: ["Hub gauge " + n2, [g2.nom + g2.lo, g2.nom + g2.up]]
+    };
+    $("cap-l").textContent = "Click any number to copy it. Labels show min to max.";
+
+    drawSection(r);
+  }
+
+  /* ---------------- drawing ---------------- */
+
+  function drawSection(r) {
+    var cx = 340, cy = 165, R = 90, HR = 150;
+    var s = R / (r.d / 2);
+    var bw = r.b * s, kh = r.h * s;
+    var t1 = r.d - r.g1.nom, t2 = r.g2.nom - r.d;        // gauge dimensions expressed as depth beyond the shaft and bore crown
+    var yShaftSlotBot = cy - (r.d / 2 - t1) * s;         // y of shaft slot bottom
+    var yHubSlotTop = cy - (r.d / 2 + t2) * s;           // y of hub slot top
+
+    function set(id, x, y, w, h) { var e = $(id); e.setAttribute("x", x); e.setAttribute("y", y); e.setAttribute("width", Math.max(w, 0)); e.setAttribute("height", Math.max(h, 0)); }
+    set("dr-hubslot", cx - bw / 2, yHubSlotTop, bw, cy - R * 0.6 - yHubSlotTop);
+    // shaft slot runs from its bottom up past the shaft surface
+    var topOfShaft = cy - R;
+    set("dr-shaftslot", cx - bw / 2, topOfShaft - 4, bw, yShaftSlotBot - topOfShaft + 4);
+    set("dr-key", cx - bw / 2, yShaftSlotBot - kh, bw, kh);
+
+    var xl = cx - HR - 16, xr = cx + HR + 16, yb = cy + R;   // vertical dimension lines sit outside the hub
+    var xtl = xl - 8, xtr = xr + 8;                         // label columns
+    var cal = r.cal, g = "";
+    function line(cls, x1, y1, x2, y2) { return '<line class="' + cls + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"/>'; }
+    function tick(x, y) { return '<path class="dim" d="M' + (x - 4) + " " + (y + 4) + " L" + (x + 4) + " " + (y - 4) + '"/>'; }
+    function dot(x, y) { return '<circle cx="' + x + '" cy="' + y + '" r="2.5" fill="var(--ink)"/>'; }
+    function svgNum(v) { var t = fmt(v); return '<tspan class="cp" data-copy="' + plain(t) + '" tabindex="0" role="button">' + t + "</tspan>"; }
+    function range(a) { return a.map(svgNum).join(" – "); }
+    function label(x, y, anchor, c) {
+      return '<text class="dim-t" x="' + x + '" y="' + y + '" text-anchor="' + anchor + '"><tspan class="dim-s">' + c[0] + '</tspan><tspan class="dim-v" x="' + x + '" dy="16">' + range(c[1]) + "</tspan></text>";
+    }
+    // vertical gauge dimensions, with their limits beside the dimension line
+    g += line("ext", xl - 6, yb, cx, yb) + line("ext", xl - 6, yShaftSlotBot, cx - bw / 2, yShaftSlotBot);
+    g += line("dim", xl, yb, xl, yShaftSlotBot) + tick(xl, yb) + tick(xl, yShaftSlotBot);
+    g += label(xtl, cy + 34, "end", cal.g1);
+    g += line("ext", cx, yb, xr + 6, yb) + line("ext", cx + bw / 2, yHubSlotTop, xr + 6, yHubSlotTop);
+    g += line("dim", xr, yb, xr, yHubSlotTop) + tick(xr, yb) + tick(xr, yHubSlotTop);
+    g += label(xtr, cy + 34, "start", cal.g2);
+    // widths and height: leader lines out to the label columns
+    var lx = xl + 4, rx = xr - 4;
+    var yHubPt = yHubSlotTop + 2, yShaftPt = yShaftSlotBot - 3;
+    g += line("ext", lx, 20, cx - bw / 2, yHubPt) + dot(cx - bw / 2, yHubPt) + label(xtl, 24, "end", cal.hubW);
+    g += line("ext", lx, 80, cx - bw / 2, yShaftPt) + dot(cx - bw / 2, yShaftPt) + label(xtl, 84, "end", cal.shaftW);
+    g += line("ext", rx, 20, cx + bw / 2, yShaftSlotBot - kh) + dot(cx + bw / 2, yShaftSlotBot - kh) + label(xtr, 24, "start", cal.keyW);
+    g += line("ext", rx, 80, cx + bw / 2, yShaftSlotBot - kh / 2) + dot(cx + bw / 2, yShaftSlotBot - kh / 2) + label(xtr, 84, "start", cal.keyH);
+    $("dr-dims").innerHTML = g;
+  }
+
+  /* ---------------- copy ---------------- */
+
+  function copyText() {
+    if (!last) return "";
+    var t = "Keyway for d = " + fmt(last.d) + (unit === "mm" ? " mm" : " in") + "\n" + last.keyLabel + "  (" + last.stdLabel + ")\n\n";
+    var trs = $("rows").querySelectorAll("tr");
+    for (var i = 0; i < trs.length; i++) {
+      var tds = trs[i].children;
+      if (trs[i].className === "group") t += "\n" + tds[0].textContent.toUpperCase() + "\n";
+      else t += "  " + tds[0].firstChild.textContent + ": " + tds[1].textContent + "  tol " + tds[2].textContent + "  min " + tds[3].textContent + "  max " + tds[4].textContent + "\n";
+    }
+    var cards = $("fits").querySelectorAll(".fit-card");
+    if (cards.length) t += "\nFITS (slot minus key)\n";
+    for (var j = 0; j < cards.length; j++) t += "  " + cards[j].querySelector("h3").textContent + ": " + cards[j].querySelector(".range").textContent + " (" + cards[j].querySelector(".tag").textContent + ")\n";
+    return t;
+  }
+
+  /* ---------------- click a number to copy it ---------------- */
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg; t.className = "toast show";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.className = "toast"; }, 1600);
+  }
+  function writeClipboard(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+    } else fallback();
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      done(ok);
+    }
+  }
+  function copyNumber(el) {
+    var v = el.getAttribute("data-copy");
+    writeClipboard(v, function (ok) {
+      if (!ok) { toast("Copy failed"); return; }
+      toast("Copied " + v);
+      el.classList.add("flash");
+      setTimeout(function () { el.classList.remove("flash"); }, 350);
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest ? e.target.closest("[data-copy]") : null;
+    if (el) copyNumber(el);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var el = e.target.closest ? e.target.closest("tspan[data-copy]") : null; // buttons already handle Enter and Space
+    if (el) { e.preventDefault(); copyNumber(el); }
+  });
+
+  /* ---------------- wiring ---------------- */
+
+  function setUnit(u) {
+    if (u === unit) return;
+    unit = u;
+    $("u-mm").setAttribute("aria-pressed", u === "mm");
+    $("u-in").setAttribute("aria-pressed", u === "in");
+    $("dia-label").textContent = u === "mm" ? "Shaft diameter d (mm)" : "Shaft diameter D (in)";
+    $("fit").innerHTML = u === "mm"
+      ? '<option value="loose">Loose · H9 / D10</option><option value="normal" selected>Normal · N9 / JS9</option><option value="close">Close · P9 / P9</option>'
+      : '<option value="1">Class 1 · clearance</option><option value="2" selected>Class 2 · standard</option>';
+    $("fit-hint").textContent = u === "mm"
+      ? "Shaft keyseat fit first, then hub keyseat fit. Normal is the usual choice for a key that slides on assembly and carries torque both ways. Close is for reversing or shock loads. Loose is for hubs that must slide along the shaft."
+      : "Class 1 is a free, metal-to-metal side fit using bar stock keys. Class 2 is a tighter side fit using key stock, with clearance or slight interference.";
+    $("dia").value = u === "mm" ? 40 : 1.5;
+    render();
+  }
+  $("u-mm").addEventListener("click", function () { setUnit("mm"); });
+  $("u-in").addEventListener("click", function () { setUnit("in"); });
+  $("dia").addEventListener("input", render);
+  $("fit").addEventListener("change", render);
+  $("copy").addEventListener("click", function () {
+    var t = copyText(), msg = $("copy-msg");
+    if (!t) return;
+    var done = function (ok) { msg.textContent = ok ? "Copied." : "Copy failed. Select the table instead."; setTimeout(function () { msg.textContent = ""; }, 2500); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { done(true); }, function () { done(false); });
+    else done(false);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

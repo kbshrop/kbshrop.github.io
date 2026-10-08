@@ -587,3 +587,16 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
   color: rgba(220, 195, 140, 0.75);
   justify-content: space-between;
 }
+
+/* ---------- Tools shadow board ---------------------------------------- */
+
+.tools-board { overflow-x: auto; }
+.tools-board svg { display: block; width: 100%; min-width: 680px; height: auto; }
+.tools-board .tool-link { cursor: pointer; }
+.tools-board .tool-link .lift { transition: transform 0.18s ease; }
+.tools-board .tool-link:hover .lift,
+.tools-board .tool-link:focus-visible .lift { transform: translateY(-6px); }
+.tools-board .tool-link:focus-visible { outline: none; }
+.tools-board .tool-link:focus-visible .lift { filter: drop-shadow(0 0 4px var(--brass-light)); }
+.tools-board .sb-mono { font-family: "IBM Plex Mono", monospace; }
+.tools-board .sb-head { font-family: "League Spartan", sans-serif; font-weight: 700; }
