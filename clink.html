@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clink — Kyle Shropshire</title>
+<meta name="description" content="Clink: a hand-built tabletop skill game for trade show booths. Discs fall through brass pins and you catch them by turning a handle.">
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kyle Shropshire">
+<meta property="og:title" content="Clink — Kyle Shropshire">
+<meta property="og:description" content="A hand-built tabletop skill game for trade show booths. Discs fall through brass pins and you catch them by turning a handle.">
+<meta property="og:url" content="https://kbshrop.github.io/clink.html">
+<meta property="og:image" content="https://kbshrop.github.io/assets/images/clink/clink-iso-left-web.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .clink-demo { margin: 40px auto 0; max-width: 472px; padding: 0 16px; text-align: left; }
+  /* Keep the whole board, catcher included, on screen while playing */
+  .clink-frame { width: min(100%, calc((100svh - 110px) / 1.8 + 24px)); margin: 0 auto; }
+  .clink-frame canvas { display: block; width: 100%; height: auto; touch-action: none; cursor: ew-resize; background: #cfcfca; }
+  .clink-frame canvas:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .clink-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; margin-top: 18px; }
+  .clink-readout { font-family: "League Spartan", sans-serif; font-weight: 900; font-size: clamp(28px, 5vw, 38px); line-height: 1; margin-right: auto; }
+  .clink-readout small { display: block; margin-top: 6px; font: 12px "IBM Plex Mono", monospace; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .clink-controls button {
+    font: 600 12px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 10px 14px; border: 2px solid var(--ink); border-radius: 0; background: var(--plaster); color: var(--ink); cursor: pointer;
+  }
+  .clink-controls button.primary { background: var(--olive-deep); color: var(--plaster); }
+  .clink-controls button:focus-visible, .clink-knob input:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  .clink-knob { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 14px; font: 12px "IBM Plex Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+  .clink-knob input { flex: 1; accent-color: var(--brass); }
+
+  .clink-video { max-width: 420px; }
+
+  .matrix { width: 100%; border-collapse: collapse; margin-top: 28px; font-family: "IBM Plex Mono", monospace; font-size: 12.5px; }
+  .matrix-wrap { overflow-x: auto; }
+  .matrix th, .matrix td { border: 1.5px solid var(--walnut-dark); padding: 9px 10px; text-align: center; white-space: nowrap; }
+  .matrix thead th { background: var(--plaster-deep); font-weight: 600; letter-spacing: 0.04em; }
+  .matrix tbody th { text-align: left; background: var(--plaster-deep); font-weight: 600; }
+  .matrix td { color: var(--olive-deep); }
+
+  .principles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 8px; }
+  @media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
+  .principles .fact-card h3 { font-family: "League Spartan", sans-serif; font-size: 22px; margin: 0 0 8px; }
+  .principles .fact-card p { margin: 0; }
+</style>
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap">
+    <span class="tb-name">Kyle Shropshire</span>
+    <nav class="tb-nav">
+      <a href="index.html">Home</a>
+      <!-- Links back to the main page -->
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#career">Career</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" style="padding-bottom: 64px;">
+    <div class="hero-head">
+      <p class="eyebrow" style="justify-content:center;">Hardware Product</p>
+      <h1>Clink</h1>
+      <p class="lede">A tabletop skill game built to stop people walking past a trade show booth.</p>
+    </div>
+    <div class="clink-demo">
+      <figure class="img-frame clink-frame">
+        <canvas id="clink-board" width="400" height="720" tabindex="0" role="img" aria-label="Playable Clink board. Discs fall through rows of brass pins. Move the brass catcher left and right with the arrow keys, by dragging, or with the knob slider."></canvas>
+        <figcaption class="img-caption">demo: drag, use the arrow keys, or turn the knob to move the catcher.</figcaption>
+      </figure>
+      <div class="clink-controls">
+        <div class="clink-readout"><span id="clink-score">0 / 10</span><small id="clink-best">Best: none yet</small></div>
+        <button type="button" id="clink-play" class="primary">Drop 10 discs</button>
+        <button type="button" id="clink-sound" aria-pressed="true">Sound on</button>
+        <label class="clink-knob">Knob <input type="range" id="clink-range" min="0" max="1000" step="1" value="500" aria-label="Catcher position"></label>
+      </div>
+    </div>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">00</span>Summary</p>
+    <div class="about-grid">
+      <div>
+        <h2>Real attention, not a glance</h2>
+        <p>Trade show booths fight for a few seconds of attention, and most of them fight with screens. Clink takes the opposite approach: a physical game people put their hands on.</p>
+        <p>Discs drop through rows of brass pins. The player turns a knob to slide a brass catcher back and forth along the bottom and tries to catch as many as they can. A high score board on the side lets visitors compete against each other, and sometimes against their competitors.</p>
+        <p>The point isn't the game. It's holding a prospect at the booth long enough for a salesperson to have a real conversation, and giving them something they'll remember after the show.</p>
+      </div>
+
+      <div class="fact-card">
+        <dl>
+          <dt>Project</dt><dd>Clink</dd>
+          <dt>Type</dt><dd>Hardware, tabletop skill game</dd>
+          <dt>Materials</dt><dd>Aluminum sheet, brass pins, hand-polished brass catcher</dd>
+          <dt>Status</dt><dd>Complete</dd>
+          <dt>My Involvement</dt><dd>All concept, design, and fabrication.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">01</span>Design to Build</p>
+    <div class="images photo-pair">
+      <figure class="img-frame">
+        <img src="assets/images/clink/clink-image.png" alt="CAD model of Clink showing the pin board, CLINK sign, high score board, and base with knob" class="story-img" loading="lazy">
+        <figcaption class="img-caption">image 0: The CAD model.</figcaption>
+      </figure>
+      <figure class="img-frame">
+        <img src="assets/images/clink/clink-iso-left-web.jpg" alt="The finished Clink game in brushed aluminum with brass pins, a brass catcher, and a white high score board" class="story-img" loading="lazy">
+        <figcaption class="img-caption">image 1: The finished build.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">02</span>Gameplay</p>
+    <figure class="img-frame video-frame">
+      <video class="story-video" controls preload="none" playsinline poster="assets/images/clink/clink-gameplay-poster.jpg">
+        <source src="assets/images/clink/clink-gameplay-web.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="assets/images/clink/clink-gameplay-web.mp4">Download it instead.</a>
+      </video>
+      <figcaption class="img-caption">video: Dropping discs and chasing them with the knob.</figcaption>
+    </figure>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">03</span>Finding the Clink</p>
+    <div class="about-grid">
+      <div>
+        <h2>Ear-catching, not headache-inducing</h2>
+        <p>The name is the sound, so the sound had to be right. It needed to cut through a noisy show floor and pull people over, without driving the salespeople standing next to it crazy by day three.</p>
+        <p>I tested both aluminum and brass pins against seven disc materials and recorded thousands of drops. Then I compared the recordings in the frequency domain to find the combination with the right mix of brightness and ring.</p>
+        <p>Turn your sound on for the video. That's the one that won.</p>
+      </div>
+      <figure class="img-frame clink-video">
+        <video class="story-video" controls preload="none" playsinline poster="assets/images/clink/falling-discs-poster.jpg">
+          <source src="assets/images/clink/falling-discs-web.mp4" type="video/mp4">
+          Your browser can't play this video. <a href="assets/images/clink/falling-discs-web.mp4">Download it instead.</a>
+        </video>
+        <figcaption class="img-caption">video: Discs falling through the pins. Sound on.</figcaption>
+      </figure>
+    </div>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <caption class="img-caption" style="caption-side: bottom; text-align: left;">table: Every pin and disc pairing that was recorded and compared.</caption>
+        <thead>
+          <tr><th scope="col">Pin / Disc</th><th scope="col">5052 Al</th><th scope="col">Brass</th><th scope="col">Copper</th><th scope="col">304 SS</th><th scope="col">Gr 5 Ti</th><th scope="col">Acrylic</th><th scope="col">Hardboard</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Aluminum</th><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td></tr>
+          <tr><th scope="row">Brass</th><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td><td>tested</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">04</span>Finish</p>
+    <figure class="img-frame">
+      <img src="assets/images/clink/hand-polished-catcher-web.jpg" alt="Three catchers side by side: unfinished aluminum, hand-polished aluminum, and hand-polished brass" class="story-img" loading="lazy">
+      <figcaption class="img-caption">image: Left to right, unfinished aluminum, hand-polished aluminum, and hand-polished brass.</figcaption>
+    </figure>
+    <div class="about-grid" style="margin-top: 32px;">
+      <div>
+        <h2>3x the cost for the catcher</h2>
+        <p>Unfinished aluminum would have been the cheapest catcher by far. The brass one costs three times as much and gets polished by hand every time, but nothing catches the eye like brass under show floor lights. It's also the part the player watches the whole game.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">05</span>Designed to Draw a Crowd</p>
+    <div class="principles">
+      <div class="fact-card">
+        <h3>Random events</h3>
+        <p>No two drops fall the same way. It's the same pull as dice, card packs, and every arcade game that has ever eaten a quarter.</p>
+      </div>
+      <div class="fact-card">
+        <h3>Physical interaction</h3>
+        <p>A real knob with real weight and resistance. Hands-on feedback sticks in memory in a way a touchscreen can't.</p>
+      </div>
+      <div class="fact-card">
+        <h3>Competition</h3>
+        <p>The high score board turns one player into a crowd. A prize for the top score at the end of the show keeps them coming back.</p>
+      </div>
+      <div class="fact-card">
+        <h3>Movement and sound</h3>
+        <p>Falling discs and a steady clink draw people over to see what's going on, and keep the people watching hooked.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-panel">
+    <div class="wrap">
+      <p class="eyebrow"><span class="num"></span> Contact</p>
+      <h2>Want a Clink at your booth?</h2>
+      <div class="contact-links">
+        <a href="mailto:kyle@drawnav.com?subject=Clink">Email me</a>
+      </div>
+    </div>
+    <div class="footer-titleblock">
+      <div class="wrap">
+        <span>Kyle Shropshire</span>
+        <span>Principal Engineer</span>
+        <span>Tulsa, OK</span>
+        <span>Clink</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/script.js"></script>
+<script>
+(function () {
+  var canvas = document.getElementById('clink-board');
+  var ctx = canvas.getContext('2d');
+  var W = 400, H = 720;
+  var scoreEl = document.getElementById('clink-score');
+  var bestEl = document.getElementById('clink-best');
+  var playBtn = document.getElementById('clink-play');
+  var soundBtn = document.getElementById('clink-sound');
+  var range = document.getElementById('clink-range');
+
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  // Pin grid: alternating rows of 7 and 6, like the real board
+  var PIN_R = 5, DISC_R = 11, ROWS = 12, ROW_GAP = 46, TOP = 92;
+  var pins = [];
+  for (var r = 0; r < ROWS; r++) {
+    var n = r % 2 ? 6 : 7;
+    var gap = (W - 40) / 6;
+    var x0 = r % 2 ? 20 + gap / 2 : 20;
+    for (var i = 0; i < n; i++) pins.push({ x: x0 + i * gap, y: TOP + r * ROW_GAP });
+  }
+
+  var CATCH_Y = 676, CATCH_W = 66, CATCH_SPEED = 560;
+  var catcher = { x: W / 2, target: W / 2 };
+  var discs = [];
+  var game = { running: false, dropped: 0, caught: 0, total: 10, nextDrop: 0 };
+  var keys = { left: false, right: false };
+  var best = null;
+  try { best = parseInt(localStorage.getItem('clink-best'), 10); if (isNaN(best)) best = null; } catch (e) {}
+
+  // ---------- Sound: a short inharmonic ring, like a disc on a brass pin
+  var audio = null, soundOn = true, lastClink = 0;
+  function ensureAudio() {
+    if (audio) return;
+    try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audio = null; }
+  }
+  function ring(base, partials, decay, vol) {
+    if (!soundOn || !audio) return;
+    var t = audio.currentTime;
+    var out = audio.createGain();
+    out.gain.value = vol;
+    out.connect(audio.destination);
+    partials.forEach(function (p, k) {
+      var o = audio.createOscillator();
+      var g = audio.createGain();
+      o.type = 'sine';
+      o.frequency.value = base * p;
+      g.gain.setValueAtTime(1 / (k + 1), t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + decay / (1 + k * 0.4));
+      o.connect(g); g.connect(out);
+      o.start(t); o.stop(t + decay + 0.05);
+    });
+  }
+  function clink(speed) {
+    var now = performance.now();
+    if (now - lastClink < 35) return;
+    lastClink = now;
+    ring(2100 + Math.random() * 700, [1, 2.71, 5.15, 7.9], 0.16, Math.min(0.12, 0.03 + speed / 6000));
+  }
+  function catchSound() { ring(880, [1, 2.0, 3.01, 4.2], 0.6, 0.16); }
+
+  // ---------- Game
+  function updateReadout() {
+    scoreEl.textContent = game.caught + ' / ' + game.total;
+    bestEl.textContent = best === null ? 'Best: none yet' : 'Best: ' + best + ' / ' + game.total;
+  }
+  function start() {
+    ensureAudio();
+    if (audio && audio.state === 'suspended') audio.resume();
+    discs = [];
+    game.running = true; game.dropped = 0; game.caught = 0; game.nextDrop = 0.3;
+    playBtn.textContent = 'Restart';
+    updateReadout();
+  }
+  function finish() {
+    game.running = false;
+    playBtn.textContent = 'Drop 10 again';
+    if (best === null || game.caught > best) {
+      best = game.caught;
+      try { localStorage.setItem('clink-best', String(best)); } catch (e) {}
+    }
+    updateReadout();
+  }
+  function dropDisc() {
+    discs.push({ x: 60 + Math.random() * (W - 120), y: 30, vx: (Math.random() - 0.5) * 40, vy: 0, done: false, flash: 0 });
+    game.dropped++;
+  }
+
+  function step(dt) {
+    // Catcher follows its target at handle speed, so it can't teleport
+    if (keys.left) catcher.target -= CATCH_SPEED * dt;
+    if (keys.right) catcher.target += CATCH_SPEED * dt;
+    catcher.target = Math.max(CATCH_W / 2 + 6, Math.min(W - CATCH_W / 2 - 6, catcher.target));
+    var d = catcher.target - catcher.x;
+    var maxMove = CATCH_SPEED * dt;
+    catcher.x += Math.abs(d) < maxMove ? d : Math.sign(d) * maxMove;
+    if (keys.left || keys.right) range.value = Math.round((catcher.target - CATCH_W / 2 - 6) / (W - CATCH_W - 12) * 1000);
+
+    if (game.running) {
+      game.nextDrop -= dt;
+      if (game.nextDrop <= 0 && game.dropped < game.total) { dropDisc(); game.nextDrop = 1.05 + Math.random() * 0.5; }
+    }
+
+    discs.forEach(function (b) {
+      if (b.done) { b.flash -= dt; return; }
+      b.vy += 1100 * dt;
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      if (b.x < DISC_R + 4) { b.x = DISC_R + 4; b.vx = Math.abs(b.vx) * 0.5; }
+      if (b.x > W - DISC_R - 4) { b.x = W - DISC_R - 4; b.vx = -Math.abs(b.vx) * 0.5; }
+      for (var k = 0; k < pins.length; k++) {
+        var p = pins[k];
+        var dx = b.x - p.x, dy = b.y - p.y;
+        var dist = Math.sqrt(dx * dx + dy * dy), min = DISC_R + PIN_R;
+        if (dist < min && dist > 0) {
+          var nx = dx / dist, ny = dy / dist;
+          b.x = p.x + nx * min; b.y = p.y + ny * min;
+          var vn = b.vx * nx + b.vy * ny;
+          if (vn < 0) {
+            b.vx -= 1.4 * vn * nx; b.vy -= 1.4 * vn * ny;
+            // A disc balanced on top of a pin gets a nudge off one side
+            b.vx += (Math.random() - 0.5) * 70 + (Math.abs(nx) < 0.15 ? (Math.random() < 0.5 ? -60 : 60) : 0);
+            clink(-vn);
+          }
+        }
+      }
+      var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if (sp > 520) { b.vx *= 520 / sp; b.vy *= 520 / sp; }
+
+      if (b.y >= CATCH_Y - 4 && b.y <= CATCH_Y + 14 && Math.abs(b.x - catcher.x) < CATCH_W / 2 - 4) {
+        b.done = true; b.caught = true; b.flash = 0.5; b.y = CATCH_Y + 2; b.x = catcher.x;
+        game.caught++; catchSound(); updateReadout();
+      } else if (b.y > H + DISC_R) {
+        b.done = true; b.flash = 0;
+      }
+    });
+    discs = discs.filter(function (b) { return !b.done || b.flash > 0; });
+
+    if (game.running && game.dropped >= game.total && discs.every(function (b) { return b.done; })) finish();
+  }
+
+  // ---------- Drawing
+  var bg = ctx.createLinearGradient(0, 0, W, 0);
+  bg.addColorStop(0, '#b9b9b3'); bg.addColorStop(0.35, '#e4e3dd'); bg.addColorStop(0.6, '#d3d2cc'); bg.addColorStop(1, '#aeaea8');
+  var streaks = [];
+  for (var s = 0; s < 90; s++) streaks.push({ y: Math.random() * H, a: Math.random() * 0.06 });
+
+  function draw() {
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    streaks.forEach(function (st) { ctx.fillStyle = 'rgba(255,255,255,' + st.a + ')'; ctx.fillRect(0, st.y, W, 1); });
+    ctx.fillStyle = 'rgba(28,26,23,0.18)'; ctx.fillRect(0, 0, 4, H); ctx.fillRect(W - 4, 0, 4, H);
+
+    pins.forEach(function (p) {
+      var g = ctx.createRadialGradient(p.x - 1.5, p.y - 1.5, 0.5, p.x, p.y, PIN_R);
+      g.addColorStop(0, '#f6e3a8'); g.addColorStop(0.5, '#c39a4a'); g.addColorStop(1, '#6e5222');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x, p.y, PIN_R, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Rail and catcher
+    ctx.fillStyle = '#2a2622'; ctx.fillRect(0, CATCH_Y + 22, W, 6);
+    var cx = catcher.x, cy = CATCH_Y, hw = CATCH_W / 2;
+    var cg = ctx.createLinearGradient(cx - hw, 0, cx + hw, 0);
+    cg.addColorStop(0, '#9a7a3c'); cg.addColorStop(0.45, '#f3dc9a'); cg.addColorStop(1, '#a8843f');
+    ctx.fillStyle = cg; ctx.strokeStyle = '#5b4319'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - hw, cy - 8); ctx.lineTo(cx - 8, cy + 10); ctx.lineTo(cx + 8, cy + 10); ctx.lineTo(cx + hw, cy - 8);
+    ctx.lineTo(cx + hw, cy + 22); ctx.lineTo(cx - hw, cy + 22); ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    discs.forEach(function (b) {
+      var a = b.done ? Math.max(0, b.flash / 0.5) : 1;
+      ctx.globalAlpha = a;
+      var dg = ctx.createRadialGradient(b.x - 3, b.y - 3, 1, b.x, b.y, DISC_R);
+      dg.addColorStop(0, '#fbfbf8'); dg.addColorStop(0.7, '#9d9d97'); dg.addColorStop(1, '#5d5d58');
+      ctx.fillStyle = dg;
+      ctx.beginPath(); ctx.arc(b.x, b.y, DISC_R, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(28,26,23,0.45)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+
+    if (!game.running) {
+      ctx.fillStyle = 'rgba(28,26,23,0.72)';
+      ctx.fillRect(40, 300, W - 80, 96);
+      ctx.fillStyle = '#F4EFE3';
+      ctx.textAlign = 'center';
+      ctx.font = '900 34px "League Spartan", sans-serif';
+      ctx.fillText(game.dropped ? game.caught + ' of ' + game.total : 'Test your skills', W / 2, 345);
+      ctx.font = '12px "IBM Plex Mono", monospace';
+      ctx.fillText(game.dropped ? 'click or press space to go again' : 'click or press space to drop discs', W / 2, 375);
+    }
+  }
+
+  var last = 0;
+  function frame(ts) {
+    var dt = last ? Math.min((ts - last) / 1000, 1 / 30) : 0;
+    last = ts;
+    // Substeps keep fast discs from tunneling through pins
+    for (var k = 0; k < 4; k++) step(dt / 4);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- Input
+  function toBoardX(e) {
+    var rect = canvas.getBoundingClientRect();
+    return (e.clientX - rect.left) / rect.width * W;
+  }
+  var dragging = false;
+  canvas.addEventListener('pointerdown', function (e) {
+    if (!game.running) { start(); return; }
+    dragging = true;
+    canvas.setPointerCapture(e.pointerId);
+    catcher.target = toBoardX(e);
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (dragging || e.pointerType === 'mouse') catcher.target = toBoardX(e);
+  });
+  canvas.addEventListener('pointerup', function () { dragging = false; });
+  canvas.addEventListener('pointercancel', function () { dragging = false; });
+
+  canvas.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft' || e.key === 'a') { keys.left = true; e.preventDefault(); }
+    if (e.key === 'ArrowRight' || e.key === 'd') { keys.right = true; e.preventDefault(); }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); if (!game.running) start(); }
+  });
+  canvas.addEventListener('keyup', function (e) {
+    if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+    if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+  });
+  canvas.addEventListener('blur', function () { keys.left = keys.right = false; });
+
+  range.addEventListener('input', function () {
+    catcher.target = CATCH_W / 2 + 6 + range.value / 1000 * (W - CATCH_W - 12);
+  });
+  playBtn.addEventListener('click', function () { start(); canvas.focus({ preventScroll: true }); });
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    soundBtn.textContent = soundOn ? 'Sound on' : 'Sound off';
+    if (soundOn) ensureAudio();
+  });
+
+  updateReadout();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
