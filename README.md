@@ -14,6 +14,8 @@ mise-timer.html             <- project pages live at the root, one per project
 spice-rack.html
 cmth-ruler.html
 ish.html
+clink.html
+newspaper.html
 README.md
 assets/
 ├── css/
@@ -23,7 +25,8 @@ assets/
 ├── images/
 │   ├── mise-timer/         <- images (and videos) grouped by project
 │   ├── spice-rack/         <- includes robots-favorite-spice-rack.mp4
-│   └── cmth-ruler/
+│   ├── cmth-ruler/
+│   └── clink/              <- full-size originals are gitignored; pages use the -web files
 ```
 
 ## Adding a new project

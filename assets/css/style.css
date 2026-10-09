@@ -470,6 +470,7 @@ section.panel h2 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 22px; }
 .book-plaster  { --c: var(--plaster-deep); --ink: var(--walnut-dark); --band: var(--olive); }
 .book-walnut-mid { --c: var(--olive-deep); --band: var(--orange); }
 .book-clock { --c: var(--walnut); --band: var(--brass-light); }
+.book-newsprint { --c: var(--plaster); --ink: var(--charcoal); --band: var(--charcoal); }
 
 .shelf-object { flex: none; margin-left: 10px; }
 

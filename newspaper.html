@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newspaper Edition — Kyle Shropshire</title>
+<meta name="description" content="A printed engineering newspaper with articles written by peers in the engineering community. Edition 0 went out by mail to 29 readers.">
+<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kyle Shropshire">
+<meta property="og:title" content="Newspaper Edition — Kyle Shropshire">
+<meta property="og:description" content="A printed engineering newspaper with articles written by peers in the engineering community. Edition 0 went out by mail to 29 readers.">
+<meta property="og:url" content="https://kbshrop.github.io/newspaper.html">
+<meta property="og:image" content="https://kbshrop.github.io/assets/images/index/headshot.jpg">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=League+Spartan:wght@600;700;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  /* Front page mock, drawn in HTML so the headlines stay crisp */
+  .paper-frame { margin-top: 40px; padding: 18px; text-align: left; }
+  .paper {
+    background: #FBF8F0; color: var(--charcoal); padding: 26px 28px 30px;
+    border: 1px solid var(--line); box-shadow: 6px 6px 0 rgba(36, 28, 21, 0.12);
+  }
+  .paper-ears { display: flex; justify-content: space-between; gap: 12px; font: 11px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .paper-mast {
+    margin: 10px 0 0; padding-bottom: 10px; text-align: center;
+    font-family: "League Spartan", sans-serif; font-weight: 900; font-size: clamp(26px, 6vw, 58px); line-height: 1; letter-spacing: -0.01em;
+    border-bottom: 3px double var(--charcoal);
+  }
+  .paper-dateline { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; padding: 7px 0; border-bottom: 1px solid var(--charcoal); font: 11px "IBM Plex Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+  .paper-cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 0; margin-top: 16px; }
+  .paper-cols article { padding: 0 16px; border-left: 1px solid var(--line); }
+  .paper-cols article:first-child { padding-left: 0; border-left: 0; }
+  .paper-cols article:last-child { padding-right: 0; }
+  .paper h3 { margin: 0 0 4px; font-family: "League Spartan", sans-serif; font-weight: 700; line-height: 1.05; font-size: 20px; }
+  .paper .lead h3 { font-size: clamp(24px, 3.4vw, 34px); }
+  .paper .by { margin: 0 0 8px; font: 10px "IBM Plex Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+  .paper p.dek { margin: 0 0 14px; font-size: 14px; line-height: 1.45; max-width: none; }
+  .paper .rule { height: 1px; background: var(--line); margin: 0 0 14px; }
+  .paper-strip { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--charcoal); font: 11px "IBM Plex Mono", monospace; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; color: var(--ink-soft); }
+  @media (max-width: 760px) {
+    .paper { padding: 18px 16px 22px; }
+    .paper-cols { grid-template-columns: 1fr; }
+    .paper-cols article { padding: 14px 0 0; border-left: 0; border-top: 1px solid var(--line); margin-top: 14px; }
+    .paper-cols article:first-child { padding-top: 0; border-top: 0; margin-top: 0; }
+  }
+
+  .columns { column-count: 2; column-gap: 48px; }
+  .columns p { margin: 0 0 16px; break-inside: avoid; max-width: none; }
+  @media (max-width: 760px) { .columns { column-count: 1; } }
+</style>
+</head>
+<body>
+
+<header class="titleblock">
+  <div class="wrap">
+    <span class="tb-name">Kyle Shropshire</span>
+    <nav class="tb-nav">
+      <a href="index.html">Home</a>
+      <!-- Links back to the main page -->
+      <a href="index.html#about">About</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#career">Career</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" style="padding-bottom: 64px;">
+    <div class="hero-head">
+      <p class="eyebrow" style="justify-content:center;">Print Project</p>
+      <h1>Newspaper Edition</h1>
+      <p class="lede">An engineering newspaper, printed on paper and delivered by mail. Remember how to fold one?</p>
+    </div>
+
+    <figure class="img-frame paper-frame">
+      <div class="paper" role="img" aria-label="Mock front page of the EngineeringJudgement Newspaper Edition, Edition 0, listing its five articles.">
+        <div class="paper-ears" aria-hidden="true"><span>Edition 0</span><span>Tulsa, Oklahoma</span></div>
+        <div class="paper-mast" aria-hidden="true">EngineeringJudgement</div>
+        <div class="paper-dateline" aria-hidden="true"><span>Newspaper Edition</span><span>Written by engineers, for engineers</span><span>29 copies mailed</span></div>
+        <div class="paper-cols" aria-hidden="true">
+          <article class="lead">
+            <h3>Slocum Gliders</h3>
+            <p class="by">by Tony Kelbert</p>
+            <p class="dek">Ocean gliders that cover thousands of miles on a tank of compressed air, quietly collecting data with nobody aboard.</p>
+            <div class="rule"></div>
+            <h3>Project Change Order</h3>
+            <p class="by">by Sean Dotson</p>
+            <p class="dek">Undocumented scope creep is money on fire, and almost no company bills for all of it.</p>
+          </article>
+          <article>
+            <h3>Engineers Who Excel Do This</h3>
+            <p class="by">by Kyle Shropshire</p>
+            <p class="dek">Hand the repetitive spreadsheet work to VBA. Computers love doing the same thing twice.</p>
+          </article>
+          <article>
+            <h3>USA Made, Great in Theory Practice...</h3>
+            <p class="by">by Kyle Shropshire</p>
+            <p class="dek">The gap between the sticker and the shop floor, and whether your own business falls in it.</p>
+            <div class="rule"></div>
+            <h3>Other Garbage</h3>
+            <p class="by">by Kyle Shropshire</p>
+            <p class="dek">Coming soon: comics, classifieds, datasets, reader statistics, and helpful hints.</p>
+          </article>
+        </div>
+        <div class="paper-strip" aria-hidden="true">Want your article in the next edition? Email the editor.</div>
+      </div>
+      <figcaption class="img-caption">mock front page: Edition 0 and its five articles.</figcaption>
+    </figure>
+  </section>
+
+  <div class="breeze-divider" role="presentation"></div>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">00</span>Summary</p>
+    <div class="about-grid">
+      <div>
+        <h2>Back to analog.</h2>
+        <p>Everything I read about engineering lives on a screen, buried in a feed next to everything else. I wanted something you could hold, fold, and leave on a break room table.</p>
+        <p>The Newspaper Edition is a printed newspaper made of articles written by peers in the engineering community. Anyone can pitch an article, and anyone in the USA can request a copy.</p>
+        <p>Edition 0 went out by mail to 29 readers.</p>
+      </div>
+
+      <div class="fact-card">
+          <dl>
+              <dt>Project</dt><dd>Newspaper Edition</dd>
+              <dt>Type</dt><dd>Print</dd>
+              <dt>Status</dt><dd>Edition 0 mailed</dd>
+              <dt>Copies Sent</dt><dd>29</dd>
+              <dt>My Involvement</dt><dd>Concept, editing, layout, writing, and mailing.</dd>
+          </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel wrap">
+    <p class="eyebrow"><span class="num">01</span>Details</p>
+    <div class="columns">
+      <p>Each edition is built from reader-submitted articles. Authors pitch a piece by email, and readers sign up for a copy with their industry, job, and a USA mailing address.</p>
+
+      <p>Edition 0 had five pieces: a look at Slocum ocean gliders from Tony Kelbert, a case against undocumented scope creep from Sean Dotson, and three of my own on automating Excel with VBA, what "USA made" really means, and a preview of the sections still to come.</p>
+
+      <p>The readers are a mix: automation, biopharma, energy, manufacturing, electronics manufacturing, and aerospace. Job titles run from design and process engineers to founders, data scientists, recruiters, and business development managers.</p>
+
+      <p>Planned for future editions: comics, classifieds, datasets, reader statistics, and helpful hints and tips.</p>
+    </div>
+  </section>
+
+  <section class="contact-panel">
+    <div class="wrap">
+      <p class="eyebrow"><span class="num"></span> Contact</p>
+      <h2>Questions about the newspaper?</h2>
+      <p class="lede">Email me to ask about it or to pitch an article of your own.</p>
+      <div class="contact-links">
+        <a href="mailto:kyle@drawnav.com?subject=Newspaper%20Edition">Email me</a>
+      </div>
+    </div>
+    <div class="footer-titleblock">
+      <div class="wrap">
+        <span>Kyle Shropshire</span>
+        <span>Principal Engineer</span>
+        <span>Tulsa, OK</span>
+        <span>Newspaper Edition</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/js/script.js"></script>
+</body>
+</html>
